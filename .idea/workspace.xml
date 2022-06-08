@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="first commit?">
+      <change afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/NetSecMon.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.project" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/NetSecMon.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/NetSecMon.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SalesCenter Allowed Sites list -subset1.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SalesCenter Allowed Sites list -subset2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SalesCenter Allowed Sites list.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$2.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/HttpsConnection.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonApp.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI$2.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/netSecMon/Status.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/netSecMon/Status.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testURLS.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2A5sApXhKPLQdW3K9RJUdZL62st" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;18&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/purplerider/Documents/Coding/Java projects/NetSecMon&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="NetSecMonApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="18" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="netSecMon.NetSecMonApp" />
+      <module name="NetSecMon" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="netSecMon.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.NetSecMonApp" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="" />
+      <created>1654310639728</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1654310639728</updated>
+      <workItem from="1654313440306" duration="164000" />
+      <workItem from="1654313835257" duration="931000" />
+      <workItem from="1654428727579" duration="33000" />
+      <workItem from="1654430052637" duration="467000" />
+      <workItem from="1654431117944" duration="87000" />
+      <workItem from="1654431216889" duration="275000" />
+      <workItem from="1654431496533" duration="353000" />
+      <workItem from="1654433444558" duration="859000" />
+      <workItem from="1654567740898" duration="243000" />
+      <workItem from="1654569234887" duration="78000" />
+      <workItem from="1654569598309" duration="439000" />
+      <workItem from="1654570413540" duration="4579000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="first commit?" />
+    <option name="LAST_COMMIT_MESSAGE" value="first commit?" />
+  </component>
+</project>
