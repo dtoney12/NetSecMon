@@ -1,23 +1,14 @@
 
 /*
- * 
-* The NetSecMonGUI class launches the GUI for the NetSecMon application
-* 
-* @input
 
-* 
-* @exception 
-*
-* @author  Dale Toney
-* @version 1.0
-* @since   2019/3/28
+The NetSecMonGUI class launches the GUI for the NetSecMon application
+
 
 */
 
 package netSecMon;
 
 import java.awt.*;
-import java.awt.event.*;  
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,15 +23,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
 
 
-@SuppressWarnings("serial")
+
 public class NetSecMonGUI extends JFrame {
-// CONSTANTS for JFrame
-//		final int minWIDTH = 1300, minHEIGHT = 500;
-//   	final int prefWIDTH = 1500, prefHEIGHT = 800;
-//   	final Dimension minimumSizeFrame = new Dimension(minWIDTH, minHEIGHT);
-//   	final Dimension preferredSizeFrame = new Dimension(prefWIDTH, prefHEIGHT);
-//   	final Dimension preferredSizeTopPanel = new Dimension(1000, 500);
-//   	final Dimension minimumSizeCenterPanel = new Dimension(1000, 100);
+
    	final String[] searchTypes = {"URL", "IP"};
    	final Integer[] pollIntervals = {1,5,30,60,120,300,1200,3600};
    	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP First"};
@@ -59,9 +44,6 @@ public class NetSecMonGUI extends JFrame {
 
 	public NetSecMonGUI() {
 		super("NetSecMon");
-
-//		setMinimumSize(minimumSizeFrame);   
-//		setPreferredSize(preferredSizeFrame);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
 		Point newLocation = new Point(middle.x - (getWidth() / 2 ), 
@@ -82,7 +64,7 @@ public class NetSecMonGUI extends JFrame {
 //		            /|                                                                | 
 //		           / |                             CenterPanel                        |
 //		          /  |                                                                |
-//		MainPanel{   |  ResourcesOutterPanel  |    ControlPanel    |  JobsBoxPanel    |
+//		MainPanel{   |  ResourcesOuterPanel  |    ControlPanel    |  JobsBoxPanel    |
 //		          \  |-----------------------------------------------------------------
 //		           \ |                                                                |
 //		            \|                             logPanel                           |
@@ -115,7 +97,7 @@ public class NetSecMonGUI extends JFrame {
 		JPanel searchTopPanel = new JPanel();
 		searchPanel.add(searchTopPanel, BorderLayout.NORTH);
 		searchTopPanel.setBorder(new TitledBorder("Search Target"));
-		JComboBox<String> searchBox = new JComboBox<String>(searchTypes);
+		JComboBox<String> searchBox = new JComboBox<>(searchTypes);
 		searchTopPanel.add(searchBox);
 		JTextField searchText = new JTextField(20);
 		searchTopPanel.add(searchText);
@@ -125,7 +107,7 @@ public class NetSecMonGUI extends JFrame {
 		// DisplayOrderPanel
 		JPanel displayOrderPanel = new JPanel();
 		displayOrderPanel.setBorder(new TitledBorder("Display Order"));
-		JComboBox<String> displayOrderBox = new JComboBox<String>(displayOrderTypes);
+		JComboBox<String> displayOrderBox = new JComboBox<>(displayOrderTypes);
 		displayOrderPanel.add(displayOrderBox);
 		
 		// topPanel 
@@ -140,17 +122,17 @@ public class NetSecMonGUI extends JFrame {
 		
     // CenterPanel
 		
-		// ResourcesOutterPanel
+		// ResourcesOuterPanel
 		JPanel resourcesPanel = new JPanel();
 		resourcesPanel.setLayout(new BorderLayout());
 //		resourcesPanel.setMinimumSize(new Dimension(240,500));
 		resourcesPanel.setBackground(Color.WHITE);
 		JScrollPane resourcesPanelScrollPane = new JScrollPane(resourcesPanel); 
 		resourcesPanelScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		JPanel resourcesOutterPanel = new JPanel(new BorderLayout());
-		resourcesOutterPanel.setBorder(new TitledBorder("Resources View"));
-		resourcesOutterPanel.add(resourcesPanelScrollPane);
-		resourcesOutterPanel.setPreferredSize(new Dimension(240,500));
+		JPanel resourcesOuterPanel = new JPanel(new BorderLayout());
+		resourcesOuterPanel.setBorder(new TitledBorder("Resources View"));
+		resourcesOuterPanel.add(resourcesPanelScrollPane);
+		resourcesOuterPanel.setPreferredSize(new Dimension(240,500));
 		
 		// ControlPanel
 		JPanel controlPanel = new JPanel();
@@ -169,7 +151,7 @@ public class NetSecMonGUI extends JFrame {
 		
 		JPanel controlBottomPanel = new JPanel();
 		controlBottomPanel.setBorder(new TitledBorder("Polling Interval"));
-		JComboBox<Integer> pollIntervalBox = new JComboBox<Integer>(pollIntervals);
+		JComboBox<Integer> pollIntervalBox = new JComboBox<>(pollIntervals);
 		controlBottomPanel.add(pollIntervalBox);
 		
 		controlPanel.add(controlTopPanel, BorderLayout.NORTH);
@@ -188,12 +170,12 @@ public class NetSecMonGUI extends JFrame {
 		
 
 		
-		// centerPanel add ResourcesOutterPanel and JobsBoxPanel
+		// centerPanel add ResourcesOuterPanel and JobsBoxPanel
 		JPanel centerPanel = new JPanel();
 		centerPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
 //		centerPanel.setMinimumSize(minimumSizeCenterPanel);
 		centerPanel.setLayout(new BorderLayout());
-		centerPanel.add(resourcesOutterPanel, BorderLayout.WEST);
+		centerPanel.add(resourcesOuterPanel, BorderLayout.WEST);
 		centerPanel.add(controlPanel, BorderLayout.CENTER);
 		centerPanel.add(jobsBoxPanel, BorderLayout.EAST);
 
@@ -219,8 +201,8 @@ public class NetSecMonGUI extends JFrame {
 		pack();
 		
 //		control action listeners
-		pauseButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){ 
+		pauseButton.addActionListener(
+			(event) -> {
 				if (paused) {
 					pauseButton.setBackground(Color.GREEN);
 					pauseButton.setText("Pause");
@@ -231,14 +213,11 @@ public class NetSecMonGUI extends JFrame {
 				paused = !(paused);
 				manager.pause();
 			}
-		});
-		stopButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e){ 
+		);
+		stopButton.addActionListener(
+			(event) -> {
 				if (stopped) {
-//					stopButton.setBackground(Color.GREEN);
-//					stopButton.setText("Stop");
-//					Thread managerThread = new Thread(manager);
-//					managerThread.start();
+					System.out.println("Stop button was pushed /n");
 				} else {
 					stopButton.setBackground(Color.RED);
 					stopButton.setText("Stopped");
@@ -246,7 +225,7 @@ public class NetSecMonGUI extends JFrame {
 				}
 				stopped = !(stopped);
 			}
-		});
+		);
 		
 		// listener to perform search
 //		searchButton.addActionListener(e -> search());

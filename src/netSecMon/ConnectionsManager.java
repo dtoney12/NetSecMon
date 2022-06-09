@@ -1,17 +1,9 @@
 
-/**
- * 
-* The Thread_Manager class manages the thread pool and urls list for the NetSecMon application
-* 
-* @input
+/*
 
-* 
-* @exception 
-*
-* @author  Dale Toney
-* @version 1.0
-* @since   2019/3/28
-**/
+The Thread_Manager class manages the thread pool and urls list for the NetSecMon application
+
+*/
 
 
 package netSecMon;
@@ -35,8 +27,8 @@ import javax.swing.*;
 
 public class ConnectionsManager implements Runnable {
 	ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(4);
-	ArrayList<URL> urls = new ArrayList<URL>();
-	ArrayList<HttpsConnection> connections = new ArrayList<HttpsConnection>();
+	ArrayList<URL> urls = new ArrayList<>();
+	ArrayList<HttpsConnection> connections = new ArrayList<>();
 	JTextArea log;	
 	Box box;
 	
@@ -81,7 +73,7 @@ public class ConnectionsManager implements Runnable {
                 }
             }
         };
- 
+
         // Install the all-trusting trust manager
         SSLContext sc;
         String msg;
@@ -91,11 +83,7 @@ public class ConnectionsManager implements Runnable {
             	sc.init(null, trustAllCerts, new java.security.SecureRandom());
             	HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             	// Create all-trusting host name verifier
-                HostnameVerifier allHostsValid = new HostnameVerifier() {
-                    public boolean verify(String hostname, SSLSession session) {
-                        return true;
-                    }
-                };
+                HostnameVerifier allHostsValid = (String hostname, SSLSession session) -> true;
                 HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
             }
             catch (KeyManagementException E) {

@@ -1,18 +1,9 @@
 
-/**
- * 
-* 
-* The HttpsConnection class implements a Runnable and instantiates an Https Connection
-* 
-* @input
+/*
 
-* 
-* @exception 
-*
-* @author  Dale Toney
-* @version 1.0
-* @since   2019/3/28
-**/
+* The HttpsConnection class implements a Runnable and instantiates a Https Connection
+
+*/
 
 
 package netSecMon;
@@ -61,8 +52,6 @@ public class HttpsConnection implements Runnable {
     JButton buttonPause;
 	JButton buttonStop;
 	JPanel barPanel = new JPanel();
-//	JPanel requirementsPanel = new JPanel();
-//	JPanel workersAssignedPanel = new JPanel();
 	Status status = Status.AWAITING_RESOURCE;
 	JTextArea log;
 	Box box;
@@ -82,8 +71,6 @@ public class HttpsConnection implements Runnable {
 		buttonStop.setPreferredSize(new Dimension(130,20));
 		barPanel.add(new JLabel (url.toString() , SwingConstants.LEFT));
 		barPanel.add(shipLabel);
-//		barPanel.add(requirementsPanel);
-//		barPanel.add(workersAssignedPanel);
 		barPanel.add(buttonPause);
 		barPanel.add(buttonStop);
 		barPanel.add(barProgress);
@@ -95,7 +82,7 @@ public class HttpsConnection implements Runnable {
 	}
 	
 	public void run() {
-		if (pauseFlag == false) {
+		if (!pauseFlag) {
 			try {
 				box.add(barPanel);
 				box.add(spacer);
@@ -165,7 +152,8 @@ public class HttpsConnection implements Runnable {
         status = st;
         switch (status) {
         	case LOADING:
-        		break;
+			case WAITING:
+				break;
 	        case RUNNING:
 	            buttonPause.setBackground (Color.green);
 	            buttonPause.setText ("Running");
@@ -226,9 +214,7 @@ public class HttpsConnection implements Runnable {
 	        	buttonPause.setBackground (Color.red);
             	buttonPause.setText ("CERTIFICATEEXCEPTION");
             	break;
-        	case WAITING:
-        		break;
-        } // end switch on status
+		} // end switch on status
     } // end showStatus
     
 	void setJobsBox(Box jobsBox) {
@@ -253,15 +239,14 @@ public class HttpsConnection implements Runnable {
 								
 				Certificate[] certs = con.getServerCertificates();
 				for(Certificate cert : certs) {
-					if (cert instanceof X509Certificate) {
-				        X509Certificate x509cert = (X509Certificate) cert;
-	
-				        // Get subject
-				        Principal principal = x509cert.getSubjectDN();
+					if (cert instanceof X509Certificate x509cert) {
+
+						// Get subject
+				        Principal principal = x509cert.getSubjectX500Principal();
 				        String subjectDn = principal.getName();
 				        System.out.println("Cert subject : " + subjectDn);
 				        // Get issuer
-				        principal = x509cert.getIssuerDN();
+				        principal = x509cert.getIssuerX500Principal();
 				        String issuerDn = principal.getName();
 				        System.out.println("Cert issuer : " + issuerDn);
 					}

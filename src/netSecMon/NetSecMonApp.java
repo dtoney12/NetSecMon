@@ -12,9 +12,9 @@ public class NetSecMonApp {
 	}
 	
 	public void setManager() {
-		ConnectionsManager manager;
+		netSecMon.ConnectionsManager manager;
 
-		manager = new ConnectionsManager();
+		manager = new netSecMon.ConnectionsManager();
 		gui.setConnectionsManager(manager);
 		gui.getJobsBox().removeAll();
 		gui.resetButtons();
