@@ -32,7 +32,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,9 +39,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
-public class HttpsConnection implements Runnable {
+public class HttpsConnection extends JPanel implements Runnable {
 		
 	URL url;
 	HttpsURLConnection con;
@@ -51,12 +52,10 @@ public class HttpsConnection implements Runnable {
 	JLabel shipLabel;
     JButton buttonPause;
 	JButton buttonStop;
-	JPanel barPanel = new JPanel();
 	Status status = Status.AWAITING_RESOURCE;
 	JTextArea log;
-	Box box;
 	Component spacer;
-	
+	DateTimeFormatter timeStampFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SS");
 	public HttpsConnection(URL urlObject) {
 		url = urlObject;
 		barProgress = new JProgressBar();
@@ -69,84 +68,84 @@ public class HttpsConnection implements Runnable {
 		buttonPause.setBorderPainted(false);
 		buttonStop = new JButton("Stop");
 		buttonStop.setPreferredSize(new Dimension(130,20));
-		barPanel.add(new JLabel (url.toString() , SwingConstants.LEFT));
-		barPanel.add(shipLabel);
-		barPanel.add(buttonPause);
-		barPanel.add(buttonStop);
-		barPanel.add(barProgress);
-		barPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-		barPanel.setBackground(new Color(209, 223, 250));
-		spacer = Box.createRigidArea(new Dimension(0,5));
-		spacer.setBackground(Color.BLACK);
+		this.add(new JLabel (url.toString() , SwingConstants.LEFT));
+		this.add(shipLabel);
+		this.add(buttonPause);
+		this.add(buttonStop);
+		this.add(barProgress);
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.setBackground(new Color(209, 223, 250));
+//		spacer = Box.createRigidArea(new Dimension(0,5));
+//		spacer.setBackground(Color.BLACK);
+
+		// add to the jobsBox
+//		box.add(spacer);
+		showStatus(Status.RUNNING);
 		
 	}
 	
 	public void run() {
-		if (!pauseFlag) {
+		try {
+			String msg = "\n" + getTime() + " " + url.toString() + " || OPENING CONNECTION ";
+			log.append(msg);
+			System.out.println(msg);
+			con = (HttpsURLConnection) url.openConnection();
+
+			msg = "\n" + getTime() + " " + url.toString() + " || ATTEMPTING CONNECTION ";
+			log.append(msg);
+			System.out.println(msg);
+			con.connect();
 			try {
-				box.add(barPanel);
-				box.add(spacer);
-				showStatus(Status.RUNNING);
-				String msg = "\n" + url.toString() + " || OPENING CONNECTION ";
+				getResponse(con);  // get and print certs
+			} catch (javax.net.ssl.SSLHandshakeException e) {
+				msg = "\n" + getTime() + con.getURL().toString() + " || COULD NOT CONNECT || SSLHandshakeException :  ----> (HttpsConnection.con.connect() -> java.net.ssl.SSLHandshakeException ";
 				log.append(msg);
 				System.out.println(msg);
-				con = (HttpsURLConnection)url.openConnection();
-				
-				msg = "\n" + url.toString() + " || ATTEMPTING CONNECTION ";
-				log.append(msg);
-				System.out.println(msg);
-				con.connect();
-				try { 
-					getResponse(con);  // get and print certs
-				} catch (javax.net.ssl.SSLHandshakeException e) {
-					msg = "\n" + con.getURL().toString() + " || COULD NOT CONNECT || SSLHandshakeException :  ----> (HttpsConnection.con.connect() -> java.net.ssl.SSLHandshakeException ";
-					log.append(msg);
-					System.out.println(msg);
-					showStatus(Status.SSLHANDSHAKEEXCEPTION);
-					
-				} catch (SSLPeerUnverifiedException e) {
-					e.printStackTrace();
-					showStatus(Status.SSLPEERUNVERIFIEDEXCEPTION);
-				}
-				barProgress.setValue(100);
-				showStatus (Status.CONNECTED);
-		    } 
-	//		catch (sun.security.validator.ValidatorException e) {
-	//	    	String msg = "\n" + url.toString() + " || COULD NOT CONNECT || ValidatorException :  ----> (HttpsConnection.con.connect() -> sun.security.validator.ValidatorException() ";
-	//			log.append(msg);
-	//			System.out.println(msg);
-	//	    	showStatus(Status.VALIDATOREXCEPTION);
-	//	    } 
-			catch (java.net.ConnectException e) {
-		    	String msg = "\n" + url.toString() + " || COULD NOT CONNECT || ConnectException :  ----> (HttpsConnection.con.connect() -> java.net.ConnectException() ";
-		    	log.append(msg);
-				System.out.println(msg);
-		    	showStatus(Status.CONNECTEXCEPTION);
-		    } catch (java.net.SocketException e) {
-		    	String msg = "\n" + url.toString() + " || COULD NOT CONNECT || SocketException :  ----> (HttpsConnection.con.connect() -> socketException() ";
-		    	log.append(msg);
-				System.out.println(msg);
-		    	showStatus(Status.SOCKETEXCEPTION);
-		    } catch (IOException e) {
-		    	String msg = "\n" + url.toString() + " || COULD NOT CONNECT || HttpsConnection.con.connect() -> java.net.IOException() ";
-		    	log.append(msg);
-		    	log.append('\n' + e.getMessage());
-				System.out.println(msg);
-				System.out.println('\n' + e.getMessage());
-		    	showStatus(Status.IOEXCEPTION);
-		    }
-			log.append("\n");
-			System.out.println("\n");
-			//print all the content
-			//printPayload(con);
+				showStatus(Status.SSLHANDSHAKEEXCEPTION);
+
+			} catch (SSLPeerUnverifiedException e) {
+				e.printStackTrace();
+				showStatus(Status.SSLPEERUNVERIFIEDEXCEPTION);
+			}
+			barProgress.setValue(100);
+			showStatus(Status.CONNECTED);
 		}
+//		catch (sun.security.validator.ValidatorException e) {
+//	    	String msg = "\n" + url.toString() + " || COULD NOT CONNECT || ValidatorException :  ----> (HttpsConnection.con.connect() -> sun.security.validator.ValidatorException() ";
+//			log.append(msg);
+//			System.out.println(msg);
+//	    	showStatus(Status.VALIDATOREXCEPTION);
+//	    }
+		catch (java.net.ConnectException e) {
+			String msg = "\n" + getTime() + " " + url.toString() + " || COULD NOT CONNECT || ConnectException :  ----> (HttpsConnection.con.connect() -> java.net.ConnectException() ";
+			log.append(msg);
+			System.out.println(msg);
+			showStatus(Status.CONNECTEXCEPTION);
+		} catch (java.net.SocketException e) {
+			String msg = "\n" + getTime() + " " + url.toString() + " || COULD NOT CONNECT || SocketException :  ----> (HttpsConnection.con.connect() -> socketException() ";
+			log.append(msg);
+			System.out.println(msg);
+			showStatus(Status.SOCKETEXCEPTION);
+		} catch (IOException e) {
+			String msg = "\n" + getTime() + " " + url.toString() + " || COULD NOT CONNECT || HttpsConnection.con.connect() -> java.net.IOException() ";
+			log.append(msg);
+			System.out.println(msg);
+			showStatus(Status.IOEXCEPTION);
+		}
+		log.append("\n");
+		System.out.println("\n");
+		//print all the content
+		//printPayload(con);
 	}
-    
+
     public void togglePause () {
     	pauseFlag = !pauseFlag;
     }
     void setLogField(JTextArea logTextArea) {
 		log = logTextArea;
+	}
+	private String getTime() {
+		return LocalDateTime.now().format(timeStampFormat).toString();
 	}
     void showStatus (Status st) {
         status = st;
@@ -217,50 +216,46 @@ public class HttpsConnection implements Runnable {
 		} // end switch on status
     } // end showStatus
     
-	void setJobsBox(Box jobsBox) {
-		box = jobsBox;
-	}
-	   
 	private void getResponse(HttpsURLConnection con) throws javax.net.ssl.SSLHandshakeException, SSLPeerUnverifiedException  {
 	     
 		if ( con!=null ) {
 			try {
-				System.out.println("\n" + con.getURL().toString() + " || ATTEMPTING GETRESPONSE");
-				String msg = '\n' + con.getURL().toString() + " || Response Code : " + con.getResponseCode();
-				log.append(msg);
-				System.out.println(msg);
-				System.out.println("Response Message:" 
-			                + con.getResponseMessage());
-				System.out.println("Cipher Suite : " + con.getCipherSuite());
-				System.out.println("InstanceFollowRedirects:" 
-			                + con.getInstanceFollowRedirects());
-				System.out.println("Header : " + con.getHeaderField(1));
-				System.out.println("Using proxy:" + con.usingProxy());
-								
+//				System.out.println("\n" + con.getURL().toString() + " || ATTEMPTING GETRESPONSE");
+//				String msg = '\n' + con.getURL().toString() + " || Response Code : " + con.getResponseCode();
+//				log.append(msg);
+//				System.out.println(msg);
+//				System.out.println("Response Message:"
+//			                + con.getResponseMessage());
+//				System.out.println("Cipher Suite : " + con.getCipherSuite());
+//				System.out.println("InstanceFollowRedirects:"
+//			                + con.getInstanceFollowRedirects());
+//				System.out.println("Header : " + con.getHeaderField(1));
+//				System.out.println("Using proxy:" + con.usingProxy());
+//
 				Certificate[] certs = con.getServerCertificates();
-				for(Certificate cert : certs) {
-					if (cert instanceof X509Certificate x509cert) {
-
-						// Get subject
-				        Principal principal = x509cert.getSubjectX500Principal();
-				        String subjectDn = principal.getName();
-				        System.out.println("Cert subject : " + subjectDn);
-				        // Get issuer
-				        principal = x509cert.getIssuerX500Principal();
-				        String issuerDn = principal.getName();
-				        System.out.println("Cert issuer : " + issuerDn);
-					}
-					
-					System.out.println("Cert Type : " + cert.getType());
-					System.out.println("Cert Hash Code : " + cert.hashCode());
-					System.out.println("Cert Public Key Algorithm : " 
-			                                    + cert.getPublicKey().getAlgorithm());
-					System.out.println("Cert Public Key Format : " 
-			                                    + cert.getPublicKey().getFormat());
-				}
+//				for(Certificate cert : certs) {
+//					if (cert instanceof X509Certificate x509cert) {
+//
+//						// Get subject
+//				        Principal principal = x509cert.getSubjectX500Principal();
+//				        String subjectDn = principal.getName();
+//				        System.out.println("Cert subject : " + subjectDn);
+//				        // Get issuer
+//				        principal = x509cert.getIssuerX500Principal();
+//				        String issuerDn = principal.getName();
+//				        System.out.println("Cert issuer : " + issuerDn);
+//					}
+//
+//					System.out.println("Cert Type : " + cert.getType());
+//					System.out.println("Cert Hash Code : " + cert.hashCode());
+//					System.out.println("Cert Public Key Algorithm : "
+//			                                    + cert.getPublicKey().getAlgorithm());
+//					System.out.println("Cert Public Key Format : "
+//			                                    + cert.getPublicKey().getFormat());
+//				}
 							
 			} catch (IOException e){
-				String msg = "\nCOULD NOT GETRESPONSE() || IOException : " + url.toString() + " ----> (HttpsClient.httpsConnect.con.connect() -> java.net.IOException() ";
+				String msg = "\n" + getTime() + " COULD NOT GETRESPONSE() || IOException : " + url.toString() + " ----> (HttpsClient.httpsConnect.con.connect() -> java.net.IOException() ";
 				log.append(msg);
 				System.out.println(msg);
 				showStatus(Status.IOEXCEPTION_GET);

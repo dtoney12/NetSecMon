@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -27,19 +28,18 @@ import javax.swing.filechooser.FileSystemView;
 public class NetSecMonGUI extends JFrame {
 
    	final String[] searchTypes = {"URL", "IP"};
-   	final Integer[] pollIntervals = {1,5,30,60,120,300,1200,3600};
+   	final Integer[] pollIntervals = {10,30,60,120,300,1200,3600,10800,86400};
    	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP First"};
    	File file;
    	JTextField filePathTextField = new JTextField(20);
 	JTextArea log;							
 	Box jobsBox;
-	JButton pauseButton;
+	JComboBox<Integer> pollIntervalBox;
+	JButton startButton;
 	JButton stopButton;
-	Boolean paused = false;
-	Boolean stopped = false;
 	ConnectionsManager manager;
-	Thread managerThread;
 	NetSecMonApp app;
+	ArrayList<URL> urls = new ArrayList<>();
 	
 
 	public NetSecMonGUI() {
@@ -54,17 +54,14 @@ public class NetSecMonGUI extends JFrame {
 		
 //		             __________________________________________________________________
 //                   |                        Menu Bar                                |
-//                   |  File   Report  Help                                           |
+//                   |  Program   Report  Help                                        |
 //                   |________________________________________________________________|
+//		  TopPanel   |                        SearchBox                               |
+//		             |________________________________________________________________|
 //		            /|                                                                |
-//		           / |                                                                |
-//		TopPanel  {  |                                                                |
-//		           \ |        SearchPanel            |       DisplayOrderPanel        |
-//		            \|________________________________________________________________|
-//		            /|                                                                | 
-//		           / |                             CenterPanel                        |
-//		          /  |                                                                |
-//		MainPanel{   |  ResourcesOuterPanel  |    ControlPanel    |  JobsBoxPanel    |
+//		           / |                        CenterPanel                             |
+//		          /  |                                         |                      |
+//		MainPanel{   |  JobsBoxPanel                           |      ControlPanel    |
 //		          \  |-----------------------------------------------------------------
 //		           \ |                                                                |
 //		            \|                             logPanel                           |
@@ -76,88 +73,36 @@ public class NetSecMonGUI extends JFrame {
 
 // Menu bar
 		JMenuBar menu = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
+		JMenu programMenu = new JMenu("Program");
 		JMenu reportMenu = new JMenu("Report");
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem openFile = new JMenuItem("Open file");
+		JMenuItem quitProgram = new JMenuItem("Quit");
 		openFile.addActionListener(e -> chooseFile());
-		fileMenu.add(openFile);
+		quitProgram.addActionListener(e -> app.shutDown());
+		programMenu.add(openFile);
+		programMenu.add(quitProgram);
 		reportMenu.add(new JMenuItem("Generate Report"));
 		helpMenu.add(new JMenuItem("About"));
-		menu.add(fileMenu);
+		menu.add(programMenu);
 		menu.add(reportMenu);
 		menu.add(helpMenu);
 		this.setJMenuBar(menu);
 
 //  TopPanel
-		
-		// SearchPanel, include comboBox, text field, and search button
-		JPanel searchPanel = new JPanel();
-		searchPanel.setLayout(new BorderLayout());
-		JPanel searchTopPanel = new JPanel();
-		searchPanel.add(searchTopPanel, BorderLayout.NORTH);
-		searchTopPanel.setBorder(new TitledBorder("Search Target"));
-		JComboBox<String> searchBox = new JComboBox<>(searchTypes);
-		searchTopPanel.add(searchBox);
-		JTextField searchText = new JTextField(20);
-		searchTopPanel.add(searchText);
-		JButton searchButton = new JButton("Search");
-		searchTopPanel.add(searchButton);
-						
-		// DisplayOrderPanel
-		JPanel displayOrderPanel = new JPanel();
-		displayOrderPanel.setBorder(new TitledBorder("Display Order"));
-		JComboBox<String> displayOrderBox = new JComboBox<>(displayOrderTypes);
-		displayOrderPanel.add(displayOrderBox);
-		
-		// topPanel 
 		JPanel topPanel = new JPanel();
-//		topPanel.setMinimumSize(preferredSizeTopPanel);
-		topPanel.setLayout(new GridLayout(1,2));
-		topPanel.add(searchPanel);
-		topPanel.add(displayOrderPanel);
-		
+		JComboBox<String> searchBox = new JComboBox<>(searchTypes);
+		JTextField searchText = new JTextField(40);
+		JButton searchButton = new JButton("Search");
+		topPanel.add(searchBox);
+		topPanel.add(searchText);
+		topPanel.add(searchButton);
+
 		
 // mainPanel, includes center (resource, control, and jobs panels) and log panel (on bottom)
 		
     // CenterPanel
-		
-		// ResourcesOuterPanel
-		JPanel resourcesPanel = new JPanel();
-		resourcesPanel.setLayout(new BorderLayout());
-//		resourcesPanel.setMinimumSize(new Dimension(240,500));
-		resourcesPanel.setBackground(Color.WHITE);
-		JScrollPane resourcesPanelScrollPane = new JScrollPane(resourcesPanel); 
-		resourcesPanelScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		JPanel resourcesOuterPanel = new JPanel(new BorderLayout());
-		resourcesOuterPanel.setBorder(new TitledBorder("Resources View"));
-		resourcesOuterPanel.add(resourcesPanelScrollPane);
-		resourcesOuterPanel.setPreferredSize(new Dimension(240,500));
-		
-		// ControlPanel
-		JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(new BorderLayout());
-		controlPanel.setBorder(new TitledBorder("Control"));
-		JPanel controlTopPanel = new JPanel();
-		controlTopPanel.setLayout(new BorderLayout());
-		pauseButton = new JButton("Pause");
-		pauseButton.setOpaque(true);
-		pauseButton.setBackground(Color.GREEN);
-		controlTopPanel.add(pauseButton, BorderLayout.NORTH);
-		stopButton = new JButton("Stop");
-		stopButton.setOpaque(true);
-		stopButton.setBackground(null);
-		controlTopPanel.add(stopButton, BorderLayout.SOUTH);
-		
-		JPanel controlBottomPanel = new JPanel();
-		controlBottomPanel.setBorder(new TitledBorder("Polling Interval"));
-		JComboBox<Integer> pollIntervalBox = new JComboBox<>(pollIntervals);
-		controlBottomPanel.add(pollIntervalBox);
-		
-		controlPanel.add(controlTopPanel, BorderLayout.NORTH);
-		controlPanel.add(controlBottomPanel, BorderLayout.SOUTH);
-		controlPanel.setPreferredSize(new Dimension(130,200));
-		
+
 		// JobsBoxPanel
 		jobsBox = Box.createVerticalBox();
 		JScrollPane jobsBoxScrollPane = new JScrollPane(jobsBox);
@@ -167,17 +112,48 @@ public class NetSecMonGUI extends JFrame {
 		jobsBoxPanel.setBorder(new TitledBorder("Jobs in Progress"));
 		jobsBoxPanel.add(jobsBoxScrollPane);
 		jobsBoxPanel.setPreferredSize(new Dimension(1000,500));
-		
 
-		
-		// centerPanel add ResourcesOuterPanel and JobsBoxPanel
+
+		// ControlPanel
+		JPanel controlPanel = new JPanel();
+		controlPanel.setLayout(new BorderLayout());
+		controlPanel.setBorder(new TitledBorder("Control"));
+
+		JPanel controlTopPanel = new JPanel();
+		controlTopPanel.setLayout(new GridLayout());
+		startButton = new JButton("Start");
+		startButton.setOpaque(true);
+		controlTopPanel.add(startButton);
+		stopButton = new JButton("Stop");
+		stopButton.setOpaque(true);
+		controlTopPanel.add(stopButton);
+
+		JPanel displayOrderPanel = new JPanel();
+		displayOrderPanel.setBorder(new TitledBorder("Order"));
+		JComboBox<String> displayOrderBox = new JComboBox<>(displayOrderTypes);
+		displayOrderPanel.add(displayOrderBox);
+
+		JPanel pollIntervalPanel = new JPanel();
+		pollIntervalPanel .setBorder(new TitledBorder("Poll (seconds)"));
+		pollIntervalBox = new JComboBox<>(pollIntervals);
+		pollIntervalBox.setSelectedIndex(3);
+
+		pollIntervalPanel .add(pollIntervalBox);
+
+		JPanel controlBottomPanel = new JPanel();
+		controlBottomPanel.add(displayOrderPanel);
+		controlBottomPanel.add(pollIntervalPanel);
+
+		controlPanel.add(controlTopPanel, BorderLayout.NORTH);
+		controlPanel.add(controlBottomPanel, BorderLayout.SOUTH);
+
+		// centerPanel add controlPanel and JobsBoxPanel
 		JPanel centerPanel = new JPanel();
 		centerPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
-//		centerPanel.setMinimumSize(minimumSizeCenterPanel);
 		centerPanel.setLayout(new BorderLayout());
-		centerPanel.add(resourcesOuterPanel, BorderLayout.WEST);
-		centerPanel.add(controlPanel, BorderLayout.CENTER);
-		centerPanel.add(jobsBoxPanel, BorderLayout.EAST);
+		centerPanel.add(jobsBoxPanel, BorderLayout.WEST);
+		centerPanel.add(controlPanel, BorderLayout.EAST);
+
 
 
 	// LogPanel
@@ -201,58 +177,37 @@ public class NetSecMonGUI extends JFrame {
 		pack();
 		
 //		control action listeners
-		pauseButton.addActionListener(
-			(event) -> {
-				if (paused) {
-					pauseButton.setBackground(Color.GREEN);
-					pauseButton.setText("Pause");
-				} else {
-					pauseButton.setBackground(Color.ORANGE);
-					pauseButton.setText("Paused");
-				}
-				paused = !(paused);
-				manager.pause();
+		startButton.addActionListener( e -> {
+			if (manager != null) {
+				manager.startPolling();
 			}
-		);
-		stopButton.addActionListener(
-			(event) -> {
-				if (stopped) {
-					System.out.println("Stop button was pushed /n");
-				} else {
-					stopButton.setBackground(Color.RED);
-					stopButton.setText("Stopped");
-					manager.stop();
-				}
-				stopped = !(stopped);
+		} );
+
+		stopButton.addActionListener( e -> {
+			if (manager != null) {
+				manager.stopPolling();
 			}
-		);
+		} );
+
+		pollIntervalBox.addActionListener( e-> {
+			if (manager != null) {
+				manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
+			}
+		});
 		
 		// listener to perform search
 //		searchButton.addActionListener(e -> search());
-		
 	}
-	
 	public void setConnectionsManager(ConnectionsManager connectionsManager) {
 		manager = connectionsManager;
-	}
-	public void resetButtons() {
-		pauseButton.setBackground(Color.GREEN);
-		pauseButton.setText("Pause");
-		paused = false;
-		stopButton.setBackground(Color.RED);
-		stopButton.setText("Stop");
-		stopped = false;
+		manager.setJobsBox(jobsBox);
+		manager.setLogField(log);
+		manager.setUrls(urls);
+		manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
 	}
 	public void setAppInstance(NetSecMonApp thisApp) {
 		app = thisApp;
 	}
-	public JTextArea getLogField() {
-		return log;
-	}
-	public Box getJobsBox() {
-		return jobsBox;
-	}
-	
 	// Use file dialog to select file.
 	private void chooseFile() {
 		try {
@@ -265,12 +220,11 @@ public class NetSecMonGUI extends JFrame {
             }
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
-		} 
+		}
 	}
 	
 	private void readFile() throws FileNotFoundException {
-		app.setManager();
-		
+		urls.clear();
 		Scanner sc = new Scanner(new BufferedReader(new FileReader(file)));
 		while (sc.hasNextLine()) {
 			String line = sc.nextLine();
@@ -283,9 +237,8 @@ public class NetSecMonGUI extends JFrame {
 			scLine.close();
 		}
 		sc.close();
-		
-		managerThread = new Thread(manager);
-		managerThread.start();
+
+		app.loadThreadManager();
 	}
 	
 	
@@ -295,12 +248,12 @@ public class NetSecMonGUI extends JFrame {
 		  try {
 			  preparsedString = preparse(urlString);
 			  url = new URL(preparsedString);
-			  manager.urls.add(url);
+			  urls.add(url);
 			  System.out.println("\nURL ADDED: " + preparsedString +'\n');
 			  log.append("\nURL ADDED: " + preparsedString +'\n');
 		     
 		  } catch (MalformedURLException e) {
-			  System.out.println('\n'  + "COULD NOT FORM URL: " + urlString + " || Preparsed output: " + preparsedString + "  -- -> java.net.MalformedURLException() ");
+			  System.out.println('\n' + "COULD NOT FORM URL: " + urlString + " || Preparsed output: " + preparsedString + "  -- -> java.net.MalformedURLException() ");
 		  }
 	}
 	
@@ -317,6 +270,4 @@ public class NetSecMonGUI extends JFrame {
 		targetUrlString = "https://" + targetUrlString;
 		return targetUrlString;
 	}
-	
-	
 }

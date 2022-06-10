@@ -14,6 +14,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,40 +27,59 @@ import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 
 public class ConnectionsManager implements Runnable {
-	ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(4);
-	ArrayList<URL> urls = new ArrayList<>();
+	ScheduledThreadPoolExecutor pool;
+	ArrayList<URL> urls;
 	ArrayList<HttpsConnection> connections = new ArrayList<>();
+	ArrayList<ScheduledFuture> poolTasks = new ArrayList<>();
+
 	JTextArea log;	
 	Box box;
+	private int pollingInterval;
 	
 	
 	public void run() {
 //		setTrustAllCerts();
+		connections.clear();
+		box.removeAll();
 		for (URL url: urls) {
 			HttpsConnection connection = new HttpsConnection(url);
 			connections.add(connection);
+			box.add(connection);
 			connection.setLogField(log);
-			connection.setJobsBox(box);
-			pool.scheduleAtFixedRate(connection, 0, 30, TimeUnit.SECONDS);
 		}
 	}
-	
-	public void pause() {
+	public void startPolling() {
+		pool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(4);
+		poolTasks.clear();
 		for (HttpsConnection connection: connections) {
-			connection.togglePause();
+			poolTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
 		}
-//		
 	}
-	
-	public void stop() {
-		pool.shutdown();
+	public void stopPolling() {
+		if (pool != null) pool.shutdownNow();
+		for (ScheduledFuture task: poolTasks) {
+			task.cancel(true);
+		}
+		poolTasks.clear();
 	}
-	
+
+	public void setPollingInterval(Integer i) {
+		pollingInterval = i;
+		if (!poolTasks.isEmpty()) {
+			poolTasks.clear();
+			for (HttpsConnection connection : connections) {
+				poolTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
+			}
+		}
+	}
 	void setLogField(JTextArea logTextArea) {
 		log = logTextArea;
 	}
 	void setJobsBox(Box jobsBox) {
 		box = jobsBox;
+	}
+	void setUrls(ArrayList<URL> urlList) {
+		urls = urlList;
 	}
 	private void setTrustAllCerts() {
 		// Create a trust manager that does not validate certificate chains
