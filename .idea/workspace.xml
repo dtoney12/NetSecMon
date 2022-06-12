@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="fixed warnings and file structure">
+    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Rebuilt thread pool to incorporate change of polling interval">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testURLS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/testURLS.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,20 +27,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "jdk.selected.JAVA_MODULE": "18",
-    "last_opened_file_path": "/Users/purplerider/Documents/Coding/Java projects/NetSecMon",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "Errors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;18&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/purplerider/Documents/Coding/Java projects/NetSecMon&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="netSecMon.NetSecMonApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="18" />
@@ -85,7 +83,9 @@
       <workItem from="1654569234887" duration="78000" />
       <workItem from="1654569598309" duration="439000" />
       <workItem from="1654570413540" duration="5760000" />
-      <workItem from="1654745856391" duration="37222000" />
+      <workItem from="1654745856391" duration="37764000" />
+      <workItem from="1654871222325" duration="323000" />
+      <workItem from="1655044113847" duration="4389000" />
     </task>
     <task id="LOCAL-00001" summary="first commit?">
       <created>1654670021044</created>
@@ -101,7 +101,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654762992954</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Rebuilt thread pool to incorporate change of polling interval">
+      <created>1654866443859</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1654866443859</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -121,6 +128,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first commit?" />
     <MESSAGE value="fixed warnings and file structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed warnings and file structure" />
+    <MESSAGE value="Rebuilt thread pool to incorporate change of polling interval" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rebuilt thread pool to incorporate change of polling interval" />
   </component>
 </project>

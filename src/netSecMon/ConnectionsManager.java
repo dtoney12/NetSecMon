@@ -14,6 +14,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -30,13 +31,16 @@ public class ConnectionsManager implements Runnable {
 	ScheduledThreadPoolExecutor pool;
 	ArrayList<URL> urls;
 	ArrayList<HttpsConnection> connections = new ArrayList<>();
-	ArrayList<ScheduledFuture> poolTasks = new ArrayList<>();
+	ArrayList<ScheduledFuture> poolFutureTasks = new ArrayList<>();
 
 	JTextArea log;	
 	Box box;
 	private int pollingInterval;
 	
-	
+	public ConnectionsManager() {
+		pool = new ScheduledThreadPoolExecutor(4);
+		pool.setRemoveOnCancelPolicy(true);
+	}
 	public void run() {
 //		setTrustAllCerts();
 		connections.clear();
@@ -49,28 +53,26 @@ public class ConnectionsManager implements Runnable {
 		}
 	}
 	public void startPolling() {
-		pool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(4);
-		poolTasks.clear();
+		poolFutureTasks.clear();
 		for (HttpsConnection connection: connections) {
-			poolTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
+			poolFutureTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
 		}
+		System.out.println("NUMBER OF FUTURETASKS IN POOL = " + poolFutureTasks.size());
 	}
 	public void stopPolling() {
-		if (pool != null) pool.shutdownNow();
-		for (ScheduledFuture task: poolTasks) {
-			task.cancel(true);
+		for (ScheduledFuture futureTask: poolFutureTasks) {
+			futureTask.cancel(true);
 		}
-		poolTasks.clear();
+		poolFutureTasks.clear();
 	}
 
 	public void setPollingInterval(Integer i) {
 		pollingInterval = i;
-		if (!poolTasks.isEmpty()) {
-			poolTasks.clear();
-			for (HttpsConnection connection : connections) {
-				poolTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
-			}
-		}
+	}
+	public void changePollingInterval(Integer i) {
+		setPollingInterval(i);
+		stopPolling();
+		startPolling();
 	}
 	void setLogField(JTextArea logTextArea) {
 		log = logTextArea;

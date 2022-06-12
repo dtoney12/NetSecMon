@@ -28,7 +28,7 @@ import javax.swing.filechooser.FileSystemView;
 public class NetSecMonGUI extends JFrame {
 
    	final String[] searchTypes = {"URL", "IP"};
-   	final Integer[] pollIntervals = {10,30,60,120,300,1200,3600,10800,86400};
+   	final Integer[] pollIntervals = {5,10,30,60,120,300,1200,3600,10800,86400};
    	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP First"};
    	File file;
    	JTextField filePathTextField = new JTextField(20);
@@ -136,7 +136,7 @@ public class NetSecMonGUI extends JFrame {
 		JPanel pollIntervalPanel = new JPanel();
 		pollIntervalPanel .setBorder(new TitledBorder("Poll (seconds)"));
 		pollIntervalBox = new JComboBox<>(pollIntervals);
-		pollIntervalBox.setSelectedIndex(3);
+		pollIntervalBox.setSelectedIndex(2);
 
 		pollIntervalPanel .add(pollIntervalBox);
 
@@ -191,7 +191,7 @@ public class NetSecMonGUI extends JFrame {
 
 		pollIntervalBox.addActionListener( e-> {
 			if (manager != null) {
-				manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
+				manager.changePollingInterval((Integer) pollIntervalBox.getSelectedItem());
 			}
 		});
 		

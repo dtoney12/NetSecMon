@@ -11,8 +11,7 @@ public class NetSecMonApp {
 	private final NetSecMonGUI gui;
 	private ConnectionsManager manager;
 	private final ExecutorService managerThread = Executors.newSingleThreadExecutor();
-	private Future<?> managerThreadHandle;
-	private NetSecMonApp() {	
+	private NetSecMonApp() {
 		gui = new NetSecMonGUI();
 		gui.setAppInstance(this);
 		gui.setVisible(true);
@@ -25,8 +24,7 @@ public class NetSecMonApp {
 
 	public void shutDown() {
 		manager.stopPolling();
-		managerThreadHandle.cancel(true);
-		managerThread.shutdown();
+		managerThread.shutdownNow();
 		gui.setVisible(false);
 		gui.dispose();
 		System.exit(0);
