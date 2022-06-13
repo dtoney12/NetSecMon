@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Thread pool now clearing properly upon change of polling interval">
+    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/HttpsConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/netSecMon/HttpsConnection.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonApp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" afterDir="false" />
@@ -94,7 +86,7 @@
       <workItem from="1654745856391" duration="37764000" />
       <workItem from="1654871222325" duration="323000" />
       <workItem from="1655044113847" duration="4678000" />
-      <workItem from="1655091432264" duration="16272000" />
+      <workItem from="1655091432264" duration="19924000" />
     </task>
     <task id="LOCAL-00001" summary="first commit?">
       <created>1654670021044</created>
@@ -124,7 +116,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655050628365</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion">
+      <created>1655125328487</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1655125328487</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,6 +145,7 @@
     <MESSAGE value="fixed warnings and file structure" />
     <MESSAGE value="Rebuilt thread pool to incorporate change of polling interval" />
     <MESSAGE value="Thread pool now clearing properly upon change of polling interval" />
-    <option name="LAST_COMMIT_MESSAGE" value="Thread pool now clearing properly upon change of polling interval" />
+    <MESSAGE value="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion" />
   </component>
 </project>

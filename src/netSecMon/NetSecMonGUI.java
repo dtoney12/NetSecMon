@@ -33,10 +33,11 @@ public class NetSecMonGUI extends JFrame {
    	File file;
    	JTextField filePathTextField = new JTextField(20);
 	JTextArea log;							
-	Box jobsBox;
+	JPanel jobsBox;
 	JComboBox<Integer> pollIntervalBox;
 	JButton startButton;
 	JButton stopButton;
+	JButton repaintButton;
 	ConnectionsManager manager;
 	NetSecMonApp app;
 	ArrayList<URL> urls = new ArrayList<>();
@@ -104,17 +105,16 @@ public class NetSecMonGUI extends JFrame {
     // CenterPanel
 
 		// JobsBoxPanel
-		jobsBox = Box.createVerticalBox();
+		jobsBox = new JPanel();
+		jobsBox.setLayout(new BoxLayout(jobsBox, BoxLayout.Y_AXIS));
 		JScrollPane jobsBoxScrollPane = new JScrollPane(jobsBox);
 		jobsBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		jobsBoxScrollPane.getVerticalScrollBar().setUnitIncrement(30);
-		jobsBoxScrollPane.setPreferredSize(new Dimension(980,500));
+		jobsBoxScrollPane.setPreferredSize(new Dimension(960,500));
 		JPanel jobsBoxPanel = new JPanel();
 		jobsBoxPanel.setBorder(new TitledBorder("Jobs in Progress"));
 		jobsBoxPanel.add(jobsBoxScrollPane);
-		jobsBoxPanel.setPreferredSize(new Dimension(1000,0));
-//		jobsBoxPanel.setBackground(Color.red);
-
+		jobsBoxPanel.setPreferredSize(new Dimension(980,0));
 
 		// ControlPanel
 		JPanel controlPanel = new JPanel(new BorderLayout());

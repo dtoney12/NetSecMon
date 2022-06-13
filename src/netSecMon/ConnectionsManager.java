@@ -31,7 +31,7 @@ public class ConnectionsManager implements Runnable {
 //	ArrayList<ScheduledFuture> poolFutureTasks = new ArrayList<>();
 
 	JTextArea log;	
-	Box box;
+	JPanel box;
 	private int pollingInterval;
 	
 	public ConnectionsManager() {
@@ -79,16 +79,14 @@ public class ConnectionsManager implements Runnable {
 	public void deleteConnection(HttpsConnection connection) {
 		connection.cancelTask();
 		connections.remove(connection);
-		box.removeAll();
-		for (HttpsConnection conns: connections) {
-			box.add(conns);
-		}
+		box.remove(connection);
+		box.validate();
 		box.repaint();
 	}
 	void setLogField(JTextArea logTextArea) {
 		log = logTextArea;
 	}
-	void setJobsBox(Box jobsBox) {
+	void setJobsBox(JPanel jobsBox) {
 		box = jobsBox;
 	}
 	void setUrls(ArrayList<URL> urlList) {

@@ -58,7 +58,8 @@ public class HttpsConnection extends JPanel implements Runnable {
 	DateTimeFormatter timeStampFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SS");
 	public HttpsConnection(URL urlObject) {
 		url = urlObject;
-		this.setMaximumSize(new Dimension(980,40));
+//		this.setMaximumSize(new Dimension(980,30));
+		this.setPreferredSize(new Dimension(900,40));
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		buttonDelete = new JButton("Delete");
 		buttonDelete.setPreferredSize(new Dimension(100,20));
