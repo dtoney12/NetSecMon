@@ -108,15 +108,16 @@ public class NetSecMonGUI extends JFrame {
 		JScrollPane jobsBoxScrollPane = new JScrollPane(jobsBox);
 		jobsBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		jobsBoxScrollPane.getVerticalScrollBar().setUnitIncrement(30);
-		JPanel jobsBoxPanel = new JPanel(new BorderLayout());
+		jobsBoxScrollPane.setPreferredSize(new Dimension(980,500));
+		JPanel jobsBoxPanel = new JPanel();
 		jobsBoxPanel.setBorder(new TitledBorder("Jobs in Progress"));
 		jobsBoxPanel.add(jobsBoxScrollPane);
-		jobsBoxPanel.setPreferredSize(new Dimension(1000,500));
+		jobsBoxPanel.setPreferredSize(new Dimension(1000,0));
+//		jobsBoxPanel.setBackground(Color.red);
 
 
 		// ControlPanel
-		JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(new BorderLayout());
+		JPanel controlPanel = new JPanel(new BorderLayout());
 		controlPanel.setBorder(new TitledBorder("Control"));
 
 		JPanel controlTopPanel = new JPanel();
@@ -148,7 +149,7 @@ public class NetSecMonGUI extends JFrame {
 		controlPanel.add(controlBottomPanel, BorderLayout.SOUTH);
 
 		// centerPanel add controlPanel and JobsBoxPanel
-		JPanel centerPanel = new JPanel();
+		JPanel centerPanel = new JPanel(new BorderLayout());
 		centerPanel.setBorder(BorderFactory.createLineBorder(Color.blue));
 		centerPanel.setLayout(new BorderLayout());
 		centerPanel.add(jobsBoxPanel, BorderLayout.WEST);
@@ -191,7 +192,7 @@ public class NetSecMonGUI extends JFrame {
 
 		pollIntervalBox.addActionListener( e-> {
 			if (manager != null) {
-				manager.changePollingInterval((Integer) pollIntervalBox.getSelectedItem());
+				manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
 			}
 		});
 		

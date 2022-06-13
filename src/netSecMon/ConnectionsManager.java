@@ -8,16 +8,13 @@ The Thread_Manager class manages the thread pool and urls list for the NetSecMon
 
 package netSecMon;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,7 +28,7 @@ public class ConnectionsManager implements Runnable {
 	ScheduledThreadPoolExecutor pool;
 	ArrayList<URL> urls;
 	ArrayList<HttpsConnection> connections = new ArrayList<>();
-	ArrayList<ScheduledFuture> poolFutureTasks = new ArrayList<>();
+//	ArrayList<ScheduledFuture> poolFutureTasks = new ArrayList<>();
 
 	JTextArea log;	
 	Box box;
@@ -50,29 +47,43 @@ public class ConnectionsManager implements Runnable {
 			connections.add(connection);
 			box.add(connection);
 			connection.setLogField(log);
+			connection.setManager(this);
 		}
 	}
 	public void startPolling() {
-		poolFutureTasks.clear();
+		stopPolling();
 		for (HttpsConnection connection: connections) {
-			poolFutureTasks.add(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
+			if (!connection.isOffline) {
+				ScheduledFuture task = pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS);
+				connection.setFutureTask(task);
+			}
 		}
-		System.out.println("NUMBER OF FUTURETASKS IN POOL = " + poolFutureTasks.size());
 	}
 	public void stopPolling() {
-		for (ScheduledFuture futureTask: poolFutureTasks) {
-			futureTask.cancel(true);
+		for (HttpsConnection connection: connections) {
+			if (connection.futureTask != null) {
+				connection.futureTask.cancel(true);
+			}
 		}
-		poolFutureTasks.clear();
 	}
 
 	public void setPollingInterval(Integer i) {
 		pollingInterval = i;
 	}
-	public void changePollingInterval(Integer i) {
-		setPollingInterval(i);
-		stopPolling();
-		startPolling();
+	public void restartTask(HttpsConnection connection) {
+		connection.setFutureTask(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
+		connection.setBackground(new Color(209, 223, 250));
+		connection.buttonTakeOffline.setEnabled(true);
+		connection.isOffline = false;
+	}
+	public void deleteConnection(HttpsConnection connection) {
+		connection.cancelTask();
+		connections.remove(connection);
+		box.removeAll();
+		for (HttpsConnection conns: connections) {
+			box.add(conns);
+		}
+		box.repaint();
 	}
 	void setLogField(JTextArea logTextArea) {
 		log = logTextArea;

@@ -9,14 +9,12 @@
 package netSecMon;
 
 
+import java.awt.*;
 import java.net.URL;
 import java.security.cert.Certificate;
 //import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.Principal;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.io.*;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -31,62 +29,94 @@ import javax.net.ssl.HttpsURLConnection;
 //import javax.net.ssl.SSLSession;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ScheduledFuture;
 
 
 public class HttpsConnection extends JPanel implements Runnable {
 		
 	URL url;
 	HttpsURLConnection con;
+	ConnectionsManager manager;
+	ScheduledFuture futureTask;
+	JButton buttonDelete;
+	JLabel urlLabel;
 	JProgressBar barProgress;
 	Boolean pauseFlag = false;
-	JLabel shipLabel;
     JButton buttonPause;
-	JButton buttonStop;
+	public JButton buttonTakeOffline;
+
+	public Boolean isOffline = false;
+	JButton buttonRestart;
 	Status status = Status.AWAITING_RESOURCE;
 	JTextArea log;
+	String msg;
 	Component spacer;
 	DateTimeFormatter timeStampFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SS");
 	public HttpsConnection(URL urlObject) {
 		url = urlObject;
+		this.setMaximumSize(new Dimension(980,40));
+		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		buttonDelete = new JButton("Delete");
+		buttonDelete.setPreferredSize(new Dimension(100,20));
+		urlLabel = new JLabel (String.valueOf(url), SwingConstants.LEFT);
 		barProgress = new JProgressBar();
 		barProgress.setStringPainted (true);
-		shipLabel = new JLabel();
-		shipLabel.setPreferredSize(new Dimension(140,20));
 		buttonPause = new JButton("Pause");
 		buttonPause.setPreferredSize(new Dimension(170,20));
 		buttonPause.setOpaque(true);
 		buttonPause.setBorderPainted(false);
-		buttonStop = new JButton("Stop");
-		buttonStop.setPreferredSize(new Dimension(130,20));
-		this.add(new JLabel (url.toString() , SwingConstants.LEFT));
-		this.add(shipLabel);
+		buttonTakeOffline = new JButton("Take Offline");
+		buttonTakeOffline.setPreferredSize(new Dimension(130,20));
+		buttonRestart = new JButton("Restart");
+		buttonRestart.setPreferredSize(new Dimension(100,20));
+		this.add(buttonDelete);
+		this.add(urlLabel);
 		this.add(buttonPause);
-		this.add(buttonStop);
+		this.add(buttonTakeOffline);
 		this.add(barProgress);
+		this.add(buttonRestart);
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setBackground(new Color(209, 223, 250));
 //		spacer = Box.createRigidArea(new Dimension(0,5));
 //		spacer.setBackground(Color.BLACK);
-
-		// add to the jobsBox
-//		box.add(spacer);
 		showStatus(Status.RUNNING);
-		
+		buttonTakeOffline.addActionListener( e -> takeOffline());
+		buttonRestart.addActionListener( e -> manager.restartTask(this));
+		buttonDelete.addActionListener( e -> manager.deleteConnection(this));
 	}
-	
+    void setLogField(JTextArea logTextArea) {
+		log = logTextArea;
+	}
+	public void setManager(ConnectionsManager connectionmanager) {
+		manager = connectionmanager;
+	}
+
+	public void setFutureTask(ScheduledFuture task) {
+		cancelTask();
+		futureTask = task;
+	}
+	public void cancelTask() {
+		if (futureTask != null) {
+//			System.out.println("FUTURETASK IS NULL" + (futureTask == null));
+			futureTask.cancel(true);
+		}
+	}
+	public void takeOffline() {
+		cancelTask();
+		buttonTakeOffline.setEnabled(false);
+		this.setBackground(Color.gray);
+		this.isOffline = true;
+	}
+	private String getTime() {
+		return LocalDateTime.now().format(timeStampFormat);
+	}
 	public void run() {
 		try {
-			String msg = "\n" + getTime() + " " + url.toString() + " || OPENING CONNECTION ";
+			msg = "\n" + getTime() + " " + url.toString() + " || OPENING CONNECTION ";
 			log.append(msg);
 			System.out.println(msg);
 			con = (HttpsURLConnection) url.openConnection();
@@ -127,7 +157,7 @@ public class HttpsConnection extends JPanel implements Runnable {
 			System.out.println(msg);
 			showStatus(Status.SOCKETEXCEPTION);
 		} catch (IOException e) {
-			String msg = "\n" + getTime() + " " + url.toString() + " || COULD NOT CONNECT || HttpsConnection.con.connect() -> java.net.IOException() ";
+			String msg = "\n" + getTime() + " " + url.toString() + " || COULD NOT CONNECT || IOException ";
 			log.append(msg);
 			System.out.println(msg);
 			showStatus(Status.IOEXCEPTION);
@@ -138,16 +168,7 @@ public class HttpsConnection extends JPanel implements Runnable {
 		//printPayload(con);
 	}
 
-    public void togglePause () {
-    	pauseFlag = !pauseFlag;
-    }
-    void setLogField(JTextArea logTextArea) {
-		log = logTextArea;
-	}
-	private String getTime() {
-		return LocalDateTime.now().format(timeStampFormat).toString();
-	}
-    void showStatus (Status st) {
+	void showStatus (Status st) {
         status = st;
         switch (status) {
         	case LOADING:
