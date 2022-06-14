@@ -46,10 +46,6 @@ public class NetSecMonGUI extends JFrame {
 	public NetSecMonGUI() {
 		super("NetSecMon");
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
-		Point newLocation = new Point(middle.x - (getWidth() / 2 ), 
-		                              middle.y - (getHeight() / 2 ));
-		setLocation(newLocation);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
@@ -160,8 +156,9 @@ public class NetSecMonGUI extends JFrame {
 	// LogPanel
 		JPanel logPanel = new JPanel();
 		logPanel.setBorder(new TitledBorder("LOG"));
-		log = new JTextArea(20,100); 
+		log = new JTextArea(20,100);
 		JScrollPane logScrollPane = new JScrollPane(log);
+		logPanel.setLayout(new BorderLayout());
 		logPanel.add(logScrollPane, BorderLayout.CENTER);
 		DefaultCaret caret = (DefaultCaret) log.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
