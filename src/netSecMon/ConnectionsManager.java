@@ -9,11 +9,13 @@ The Thread_Manager class manages the thread pool and urls list for the NetSecMon
 package netSecMon;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.concurrent.*;
 
 import javax.net.ssl.HostnameVerifier;
@@ -23,6 +25,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
+
 
 public class ConnectionsManager implements Runnable {
 	ScheduledThreadPoolExecutor pool;
@@ -39,30 +42,37 @@ public class ConnectionsManager implements Runnable {
 		pool.setRemoveOnCancelPolicy(true);
 	}
 	public void run() {
-//		setTrustAllCerts();
-		connections.clear();
-		box.removeAll();
-		for (URL url: urls) {
-			HttpsConnection connection = new HttpsConnection(url);
-			connections.add(connection);
-			box.add(connection);
-			connection.setLogField(log);
-			connection.setManager(this);
+		try {
+			//		setTrustAllCerts();
+			connections.clear();
+			box.removeAll();
+			for (URL url : urls) {
+				HttpsConnection connection = new HttpsConnection(url);
+				connection.setLogField(log);
+				connection.setManager(this);
+				connections.add(connection);
+				box.add(connection);
+				connection.resolveHostIP();
+				box.validate();
+				box.repaint();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("\n ERROR: " + e.getMessage());
 		}
 	}
 	public void startPolling() {
 		stopPolling();
 		for (HttpsConnection connection: connections) {
 			if (!connection.isOffline) {
-				ScheduledFuture task = pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS);
-				connection.setFutureTask(task);
+				connection.setFutureTask(pool.scheduleAtFixedRate(connection, 0, pollingInterval, TimeUnit.SECONDS));
 			}
 		}
 	}
 	public void stopPolling() {
 		for (HttpsConnection connection: connections) {
 			if (connection.futureTask != null) {
-				connection.futureTask.cancel(true);
+				connection.cancelFutureTask();
 			}
 		}
 	}
@@ -77,9 +87,51 @@ public class ConnectionsManager implements Runnable {
 		connection.isOffline = false;
 	}
 	public void deleteConnection(HttpsConnection connection) {
-		connection.cancelTask();
+		connection.cancelFutureTask();
 		connections.remove(connection);
 		box.remove(connection);
+		box.validate();
+		box.repaint();
+	}
+	public void sortBy(String sortByType) {
+		try {
+			switch (sortByType) {
+				case "Alphabetical" ->
+						connections.sort((conn1, conn2) -> conn1.url.getHost().compareToIgnoreCase(conn2.url.getHost()));
+				case "IP Address" -> connections.sort((conn1, conn2) -> {
+					if (conn1.ipAddress.length() == 0) {
+						if (conn2.ipAddress.length() == 0) {
+							return 0;
+						}
+						return 1;
+					} else if (conn2.ipAddress.length() == 0) {
+						return -1;
+					}
+					Integer[] ip1 = Arrays.stream(conn1.ipAddress.split("\\.")).mapToInt(Integer::valueOf).boxed().toArray(Integer[]::new);
+					Integer[] ip2 = Arrays.stream(conn2.ipAddress.split("\\.")).mapToInt(Integer::valueOf).boxed().toArray(Integer[]::new);
+					if (Objects.equals(ip1[0], ip2[0])) {
+						if (Objects.equals(ip1[1], ip2[1])) {
+							if (Objects.equals(ip1[2], ip2[2])) {
+								if (Objects.equals(ip1[3], ip2[3])) {
+									return 0;
+								}
+								return ip1[3].compareTo(ip2[3]);
+							}
+							return ip1[2].compareTo(ip2[2]);
+						}
+						return ip1[1].compareTo(ip2[1]);
+					}
+					return ip1[0].compareTo(ip2[0]);
+				});
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("\n ERROR: " + e.getMessage());
+		}
+		box.removeAll();
+		for (HttpsConnection connection: connections) {
+			box.add(connection);
+		}
 		box.validate();
 		box.repaint();
 	}

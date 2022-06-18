@@ -29,7 +29,7 @@ public class NetSecMonGUI extends JFrame {
 
    	final String[] searchTypes = {"URL", "IP"};
    	final Integer[] pollIntervals = {5,10,30,60,120,300,1200,3600,10800,86400};
-   	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP First"};
+   	final String[] displayOrderTypes ={"Most Recent", "Failed", "Pending", "Alphabetical", "IP Address"};
    	File file;
    	JTextField filePathTextField = new JTextField(20);
 	JTextArea log;							
@@ -192,7 +192,12 @@ public class NetSecMonGUI extends JFrame {
 				manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
 			}
 		});
-		
+
+		displayOrderBox.addActionListener( e-> {
+			if (manager != null) {
+				manager.sortBy((String) displayOrderBox.getSelectedItem());
+			}
+		});
 		// listener to perform search
 //		searchButton.addActionListener(e -> search());
 	}

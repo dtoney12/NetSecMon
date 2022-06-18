@@ -11,6 +11,8 @@ package netSecMon;
 
 import java.awt.*;
 import java.net.URL;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.cert.Certificate;
 //import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -39,13 +41,13 @@ import java.util.concurrent.ScheduledFuture;
 public class HttpsConnection extends JPanel implements Runnable {
 		
 	URL url;
+	String ipAddress = "";
 	HttpsURLConnection con;
 	ConnectionsManager manager;
 	ScheduledFuture futureTask;
 	JButton buttonDelete;
 	JLabel urlLabel;
 	JProgressBar barProgress;
-	Boolean pauseFlag = false;
     JButton buttonPause;
 	public JButton buttonTakeOffline;
 
@@ -54,16 +56,13 @@ public class HttpsConnection extends JPanel implements Runnable {
 	Status status = Status.AWAITING_RESOURCE;
 	JTextArea log;
 	String msg;
-	Component spacer;
 	DateTimeFormatter timeStampFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss.SS");
 	public HttpsConnection(URL urlObject) {
 		url = urlObject;
-//		this.setMaximumSize(new Dimension(980,30));
 		this.setPreferredSize(new Dimension(900,40));
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		buttonDelete = new JButton("Delete");
 		buttonDelete.setPreferredSize(new Dimension(100,20));
-		urlLabel = new JLabel (String.valueOf(url), SwingConstants.LEFT);
 		barProgress = new JProgressBar();
 		barProgress.setStringPainted (true);
 		buttonPause = new JButton("Pause");
@@ -74,6 +73,7 @@ public class HttpsConnection extends JPanel implements Runnable {
 		buttonTakeOffline.setPreferredSize(new Dimension(130,20));
 		buttonRestart = new JButton("Restart");
 		buttonRestart.setPreferredSize(new Dimension(100,20));
+		urlLabel = new JLabel("<html>" + url.getHost() + "</html>",SwingConstants.LEFT);
 		this.add(buttonDelete);
 		this.add(urlLabel);
 		this.add(buttonPause);
@@ -82,8 +82,6 @@ public class HttpsConnection extends JPanel implements Runnable {
 		this.add(buttonRestart);
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.setBackground(new Color(209, 223, 250));
-//		spacer = Box.createRigidArea(new Dimension(0,5));
-//		spacer.setBackground(Color.BLACK);
 		showStatus(Status.RUNNING);
 		buttonTakeOffline.addActionListener( e -> takeOffline());
 		buttonRestart.addActionListener( e -> manager.restartTask(this));
@@ -95,19 +93,28 @@ public class HttpsConnection extends JPanel implements Runnable {
 	public void setManager(ConnectionsManager connectionmanager) {
 		manager = connectionmanager;
 	}
+	public void resolveHostIP() {
+		try {
+			ipAddress = InetAddress.getByName(url.getHost()).getHostAddress();
+		} catch (UnknownHostException e) {
+			log.append("\n" + e.getMessage());
+			System.out.println("\n"+ e.getMessage());
+		}
+		urlLabel.setText("<html>" + url.getHost() + "<br/>" + ipAddress + "</html>");
+	}
 
 	public void setFutureTask(ScheduledFuture task) {
-		cancelTask();
+		cancelFutureTask();
 		futureTask = task;
 	}
-	public void cancelTask() {
+	public void cancelFutureTask() {
 		if (futureTask != null) {
 //			System.out.println("FUTURETASK IS NULL" + (futureTask == null));
 			futureTask.cancel(true);
 		}
 	}
 	public void takeOffline() {
-		cancelTask();
+		cancelFutureTask();
 		buttonTakeOffline.setEnabled(false);
 		this.setBackground(Color.gray);
 		this.isOffline = true;
@@ -117,6 +124,8 @@ public class HttpsConnection extends JPanel implements Runnable {
 	}
 	public void run() {
 		try {
+			showStatus(Status.RUNNING);
+			barProgress.setValue(0);
 			msg = "\n" + getTime() + " " + url.toString() + " || OPENING CONNECTION ";
 			log.append(msg);
 			System.out.println(msg);

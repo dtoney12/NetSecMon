@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="GUI problems &lt;fixed&gt; with jobs not compacting in the jobs Box properly after deletion">
+    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Re-oriented log box to display properly">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,7 +88,10 @@
       <workItem from="1654871222325" duration="323000" />
       <workItem from="1655044113847" duration="4678000" />
       <workItem from="1655091432264" duration="20180000" />
-      <workItem from="1655180691274" duration="809000" />
+      <workItem from="1655180691274" duration="17050000" />
+      <workItem from="1655269626075" duration="5120000" />
+      <workItem from="1655355882356" duration="19457000" />
+      <workItem from="1655447478958" duration="9654000" />
     </task>
     <task id="LOCAL-00001" summary="first commit?">
       <created>1654670021044</created>
@@ -129,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655129995433</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Re-oriented log box to display properly">
+      <created>1655181529420</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1655181529420</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -153,6 +166,7 @@
     <MESSAGE value="Thread pool now clearing properly upon change of polling interval" />
     <MESSAGE value="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion" />
     <MESSAGE value="GUI problems &lt;fixed&gt; with jobs not compacting in the jobs Box properly after deletion" />
-    <option name="LAST_COMMIT_MESSAGE" value="GUI problems &lt;fixed&gt; with jobs not compacting in the jobs Box properly after deletion" />
+    <MESSAGE value="Re-oriented log box to display properly" />
+    <option name="LAST_COMMIT_MESSAGE" value="Re-oriented log box to display properly" />
   </component>
 </project>

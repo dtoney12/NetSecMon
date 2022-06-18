@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class NetSecMonApp {
-
 	private final NetSecMonGUI gui;
 	private ConnectionsManager manager;
 	private final ExecutorService managerThread = Executors.newSingleThreadExecutor();
@@ -23,7 +22,7 @@ public class NetSecMonApp {
 	}
 
 	public void shutDown() {
-		manager.stopPolling();
+		if (manager != null) manager.stopPolling();
 		managerThread.shutdownNow();
 		gui.setVisible(false);
 		gui.dispose();
