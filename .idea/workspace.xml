@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Re-oriented log box to display properly">
+    <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="fixed some bug with sorting exception">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NetSecMon.iml" beforeDir="false" afterPath="$PROJECT_DIR$/NetSecMon.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/ConnectionsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/HttpsConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/netSecMon/Status.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/Status.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,20 +38,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;18&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/purplerider/Documents/Coding/Java projects/NetSecMon&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Downloaded.Files.Path.Enabled": "true",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "jdk.selected.JAVA_MODULE": "18",
+    "last_opened_file_path": "/Users/purplerider/Documents/Coding/Java projects/NetSecMon",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "Errors"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="netSecMon.NetSecMonApp" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="18" />
@@ -91,7 +106,7 @@
       <workItem from="1655180691274" duration="17050000" />
       <workItem from="1655269626075" duration="5120000" />
       <workItem from="1655355882356" duration="19457000" />
-      <workItem from="1655447478958" duration="9654000" />
+      <workItem from="1655447478958" duration="16627000" />
     </task>
     <task id="LOCAL-00001" summary="first commit?">
       <created>1654670021044</created>
@@ -142,7 +157,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655181529420</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="fixed some bug with sorting exception">
+      <created>1655547023869</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1655547023869</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,6 +189,7 @@
     <MESSAGE value="Some offline/delete/restart buttons on jobs now working.  GUI problems remain with jobs not compacting in the jobs Box properly after deletion" />
     <MESSAGE value="GUI problems &lt;fixed&gt; with jobs not compacting in the jobs Box properly after deletion" />
     <MESSAGE value="Re-oriented log box to display properly" />
-    <option name="LAST_COMMIT_MESSAGE" value="Re-oriented log box to display properly" />
+    <MESSAGE value="fixed some bug with sorting exception" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed some bug with sorting exception" />
   </component>
 </project>
