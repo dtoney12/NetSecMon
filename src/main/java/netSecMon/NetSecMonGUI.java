@@ -8,6 +8,8 @@ The NetSecMonGUI class launches the GUI for the NetSecMon application
 
 package netSecMon;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,40 +17,46 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
-
+import javax.swing.text.JTextComponent;
 
 
 public class NetSecMonGUI extends JFrame {
 
-   	final String[] searchTypes = {"URL", "IP"};
-   	final Integer[] pollIntervals = {5,10,30,60,120,300,1200,3600,10800,86400};
-   	final String[] displayOrderTypes ={"Most Recent", "Failed", "Pending", "Alphabetical", "IP Address"};
-   	File file;
-   	JTextField filePathTextField = new JTextField(20);
-	JTextArea log;							
+	final Integer[] pollIntervals = {5, 10, 30, 60, 120, 300, 1200, 3600, 10800, 86400};
+	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP Address"};
+	File file;
+	JTextField filePathTextField = new JTextField(20);
+	JTextArea log;
 	JPanel jobsBox;
+
+	JScrollBar scrollBar;
 	JComboBox<Integer> pollIntervalBox;
 	JButton startButton;
 	JButton stopButton;
-	JButton repaintButton;
+	JButton searchButton;
+	JComboBox<String> searchBox;
+	ArrayList<Result> results;
+
+	Vector<String> searchBoxItems = new Vector<>();
+	DefaultComboBoxModel<String> searchBoxModel = new DefaultComboBoxModel<>(searchBoxItems);
 	ConnectionsManager manager;
 	NetSecMonApp app;
 	ArrayList<URL> urls = new ArrayList<>();
-	
+
 
 	public NetSecMonGUI() {
 		super("NetSecMon");
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		
+
 //		             __________________________________________________________________
 //                   |                        Menu Bar                                |
 //                   |  Program   Report  Help                                        |
@@ -66,7 +74,6 @@ public class NetSecMonGUI extends JFrame {
 //                   |                                                                |
 //		             |________________________________________________________________|
 
-		
 
 // Menu bar
 		JMenuBar menu = new JMenuBar();
@@ -88,29 +95,31 @@ public class NetSecMonGUI extends JFrame {
 
 //  TopPanel
 		JPanel topPanel = new JPanel();
-		JComboBox<String> searchBox = new JComboBox<>(searchTypes);
-		JTextField searchText = new JTextField(40);
-		JButton searchButton = new JButton("Search");
+		topPanel.setLayout(new FlowLayout());
+		searchBox = new JComboBox<>(searchBoxModel);
+		searchBox.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		searchBox.setEditable(true);
+		searchButton = new JButton("Search");
 		topPanel.add(searchBox);
-		topPanel.add(searchText);
 		topPanel.add(searchButton);
 
-		
+
 // mainPanel, includes center (resource, control, and jobs panels) and log panel (on bottom)
-		
-    // CenterPanel
+
+		// CenterPanel
 
 		// JobsBoxPanel
 		jobsBox = new JPanel();
 		jobsBox.setLayout(new BoxLayout(jobsBox, BoxLayout.Y_AXIS));
 		JScrollPane jobsBoxScrollPane = new JScrollPane(jobsBox);
+		scrollBar = jobsBoxScrollPane.getVerticalScrollBar();
 		jobsBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		jobsBoxScrollPane.getVerticalScrollBar().setUnitIncrement(30);
-		jobsBoxScrollPane.setPreferredSize(new Dimension(960,500));
+		jobsBoxScrollPane.setPreferredSize(new Dimension(960, 500));
 		JPanel jobsBoxPanel = new JPanel();
 		jobsBoxPanel.setBorder(new TitledBorder("Jobs in Progress"));
 		jobsBoxPanel.add(jobsBoxScrollPane);
-		jobsBoxPanel.setPreferredSize(new Dimension(980,0));
+		jobsBoxPanel.setPreferredSize(new Dimension(980, 0));
 
 		// ControlPanel
 		JPanel controlPanel = new JPanel(new BorderLayout());
@@ -131,11 +140,11 @@ public class NetSecMonGUI extends JFrame {
 		displayOrderPanel.add(displayOrderBox);
 
 		JPanel pollIntervalPanel = new JPanel();
-		pollIntervalPanel .setBorder(new TitledBorder("Poll (seconds)"));
+		pollIntervalPanel.setBorder(new TitledBorder("Poll (seconds)"));
 		pollIntervalBox = new JComboBox<>(pollIntervals);
 		pollIntervalBox.setSelectedIndex(2);
 
-		pollIntervalPanel .add(pollIntervalBox);
+		pollIntervalPanel.add(pollIntervalBox);
 
 		JPanel controlBottomPanel = new JPanel();
 		controlBottomPanel.add(displayOrderPanel);
@@ -152,11 +161,10 @@ public class NetSecMonGUI extends JFrame {
 		centerPanel.add(controlPanel, BorderLayout.EAST);
 
 
-
-	// LogPanel
+		// LogPanel
 		JPanel logPanel = new JPanel();
 		logPanel.setBorder(new TitledBorder("LOG"));
-		log = new JTextArea(20,100);
+		log = new JTextArea(20, 100);
 		JScrollPane logScrollPane = new JScrollPane(log);
 		logPanel.setLayout(new BorderLayout());
 		logPanel.add(logScrollPane, BorderLayout.CENTER);
@@ -167,33 +175,77 @@ public class NetSecMonGUI extends JFrame {
 		JSplitPane mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, logPanel);
 		mainPanel.setOneTouchExpandable(true);
 		mainPanel.setDividerLocation(250);
-		
-		
+
+
 // frame add panels
 		add(topPanel, BorderLayout.NORTH);
 		add(mainPanel, BorderLayout.CENTER);
 		pack();
-		
+
 //		control action listeners
-		startButton.addActionListener( e -> {
+		searchButton.addActionListener(e -> {
+			int connectionsIndex = (results.get(searchBox.getSelectedIndex()).index);
+			scrollBar.setValue(connectionsIndex * 31);
+			System.out.println("ConnectionsIndex of : " + results.get(searchBox.getSelectedIndex()).hostURL + " = " + connectionsIndex);
+			jobsBox.validate();
+			jobsBox.repaint();
+		});
+
+		// updating searchBox dropdown matches dynamically requires access to underlying document of the combo box
+		ComboBoxEditor searchBoxEditor = searchBox.getEditor();
+		((JTextComponent) searchBoxEditor.getEditorComponent()).getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				results = getMatchResults((String) searchBoxEditor.getItem());
+				String[] resultsArray = new String[results.size()];
+				for (int i=0; i < results.size(); i++) {
+					resultsArray[i] = results.get(i).hostURL;
+				}
+				SwingUtilities.invokeLater(() -> {
+					searchBoxItems.clear();
+					Collections.addAll(searchBoxItems, resultsArray);
+					searchBox.setPopupVisible(false);
+					searchBox.setPopupVisible(true);
+				});
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				results = getMatchResults((String) searchBoxEditor.getItem());
+				String[] resultsArray = new String[results.size()];
+				for (int i=0; i < results.size(); i++) {
+					resultsArray[i] = results.get(i).hostURL;
+				}
+				SwingUtilities.invokeLater(() -> {
+					searchBoxItems.clear();
+					Collections.addAll(searchBoxItems, resultsArray);
+					searchBox.setPopupVisible(false);
+					searchBox.setPopupVisible(true);
+				});
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
+
+		startButton.addActionListener(e -> {
 			if (manager != null) {
 				manager.startPolling();
 			}
-		} );
+		});
 
-		stopButton.addActionListener( e -> {
+		stopButton.addActionListener(e -> {
 			if (manager != null) {
 				manager.stopPolling();
 			}
-		} );
+		});
 
-		pollIntervalBox.addActionListener( e-> {
+		pollIntervalBox.addActionListener(e -> {
 			if (manager != null) {
 				manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
 			}
 		});
 
-		displayOrderBox.addActionListener( e-> {
+		displayOrderBox.addActionListener(e -> {
 			if (manager != null) {
 				manager.sortBy((String) displayOrderBox.getSelectedItem());
 			}
@@ -201,6 +253,24 @@ public class NetSecMonGUI extends JFrame {
 		// listener to perform search
 //		searchButton.addActionListener(e -> search());
 	}
+
+	public ArrayList<Result> getMatchResults(String input) {
+		int minMatchRatio = 0;
+		ArrayList<Result> results = new ArrayList<>();
+
+//		for (HttpsConnection connection : manager.connections) {
+		for (int index=0; index < manager.connections.size(); index++) {
+			HttpsConnection connection = manager.connections.get(index);
+			int Fuzzymatchvalue = FuzzySearch.ratio(input, connection.url.getHost());
+			if (Fuzzymatchvalue > Integer.max(50, minMatchRatio)) {
+				results.add(new Result(Fuzzymatchvalue, connection.url.getHost(), index));
+				minMatchRatio = Fuzzymatchvalue;
+			}
+		}
+		results.sort(Result::compareTo);
+		return results;
+	}
+
 	public void setConnectionsManager(ConnectionsManager connectionsManager) {
 		manager = connectionsManager;
 		manager.setJobsBox(jobsBox);
@@ -208,24 +278,26 @@ public class NetSecMonGUI extends JFrame {
 		manager.setUrls(urls);
 		manager.setPollingInterval((Integer) pollIntervalBox.getSelectedItem());
 	}
+
 	public void setAppInstance(NetSecMonApp thisApp) {
 		app = thisApp;
 	}
+
 	// Use file dialog to select file.
 	private void chooseFile() {
 		try {
 			JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getDefaultDirectory());
 			int returnVal = chooser.showOpenDialog(this);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
-            	file = chooser.getSelectedFile();
-    			filePathTextField.setText(file.getAbsolutePath());
-            	readFile();
-            }
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				file = chooser.getSelectedFile();
+				filePathTextField.setText(file.getAbsolutePath());
+				readFile();
+			}
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	private void readFile() throws FileNotFoundException {
 		urls.clear();
 		Scanner sc = new Scanner(new BufferedReader(new FileReader(file)));
@@ -243,34 +315,51 @@ public class NetSecMonGUI extends JFrame {
 
 		app.loadThreadManager();
 	}
-	
-	
+
+
 	private void parseHTTPS(String urlString) {
 		URL url;
 		String preparsedString = "";
-		  try {
-			  preparsedString = preparse(urlString);
-			  url = new URL(preparsedString);
-			  urls.add(url);
-			  System.out.println("\nURL ADDED: " + preparsedString +'\n');
-			  log.append("\nURL ADDED: " + preparsedString +'\n');
-		     
-		  } catch (MalformedURLException e) {
-			  System.out.println('\n' + "COULD NOT FORM URL: " + urlString + " || Preparsed output: " + preparsedString + "  -- -> java.net.MalformedURLException() ");
-		  }
+		try {
+			preparsedString = preparse(urlString);
+			url = new URL(preparsedString);
+			urls.add(url);
+//			System.out.println("\nURL ADDED: " + preparsedString + '\n');
+//			log.append("\nURL ADDED: " + preparsedString + '\n');
+
+		} catch (MalformedURLException e) {
+			System.out.println('\n' + "COULD NOT FORM URL: " + urlString + " || Preparsed output: " + preparsedString + "  -- -> java.net.MalformedURLException() ");
+		}
 	}
-	
+
 	private String preparse(String targetUrlString) {
 		System.out.println('\n');
 		if (targetUrlString.charAt(0) == '*') {
-			log.append("\nWILL PREPARSE URL: " + targetUrlString);
-			System.out.println("\nWILL PREPARSE URL: " + targetUrlString);
+//			log.append("\nWILL PREPARSE URL: " + targetUrlString);
+//			System.out.println("\nWILL PREPARSE URL: " + targetUrlString);
+
 			// replace without "*." at the beginning of the url
 			int targetUrlStringLength = targetUrlString.length();
 			targetUrlString = targetUrlString.substring(2, targetUrlStringLength);
-			
+
 		}
 		targetUrlString = "https://" + targetUrlString;
 		return targetUrlString;
+	}
+
+	private class Result implements Comparable<Result> {
+		private int matchRatio;
+		public String hostURL;
+		public int index;
+
+		private Result(int ratio, String url, int i) {
+			this.matchRatio = ratio;
+			this.hostURL = url;
+			this.index = i;
+		}
+		@Override
+		public int compareTo(Result other) {
+			return Integer.compare(this.matchRatio, other.matchRatio);
+		}
 	}
 }

@@ -34,7 +34,6 @@ public class ConnectionsManager implements Runnable {
 	ArrayList<URL> urls;
 	ArrayList<HttpsConnection> connections = new ArrayList<>();
 //	ArrayList<ScheduledFuture> poolFutureTasks = new ArrayList<>();
-
 	JTextArea log;	
 	JPanel box;
 	private int pollingInterval;
@@ -54,10 +53,10 @@ public class ConnectionsManager implements Runnable {
 				connection.setManager(this);
 				connections.add(connection);
 				box.add(connection);
-				connection.resolveHostIP();
+//				connection.resolveHostIP();
 				box.validate();
 				box.repaint();
-				System.out.println("SearchFuzze result: " + searchFuzzy());
+//				System.out.println("]\n Panel height = " + connection.getHeight());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

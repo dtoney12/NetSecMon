@@ -50,7 +50,6 @@ public class HttpsConnection extends JPanel implements Runnable {
 	JProgressBar barProgress;
     JButton buttonPause;
 	public JButton buttonTakeOffline;
-
 	public Boolean isOffline = false;
 	JButton buttonRestart;
 	Status status = Status.AWAITING_RESOURCE;
@@ -109,7 +108,6 @@ public class HttpsConnection extends JPanel implements Runnable {
 	}
 	public void cancelFutureTask() {
 		if (futureTask != null) {
-//			System.out.println("FUTURETASK IS NULL" + (futureTask == null));
 			futureTask.cancel(true);
 		}
 	}
