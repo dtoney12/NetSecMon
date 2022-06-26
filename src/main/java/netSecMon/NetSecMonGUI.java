@@ -17,6 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 import javax.swing.*;
@@ -82,11 +86,11 @@ public class NetSecMonGUI extends JFrame {
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem openFile = new JMenuItem("Open file");
 		JMenuItem quitProgram = new JMenuItem("Quit");
-		openFile.addActionListener(e -> chooseFile());
 		quitProgram.addActionListener(e -> app.shutDown());
 		programMenu.add(openFile);
 		programMenu.add(quitProgram);
-		reportMenu.add(new JMenuItem("Generate Report"));
+		JMenuItem reportGenerate = new JMenuItem("Generate Report");
+		reportMenu.add(reportGenerate);
 		helpMenu.add(new JMenuItem("About"));
 		menu.add(programMenu);
 		menu.add(reportMenu);
@@ -183,6 +187,9 @@ public class NetSecMonGUI extends JFrame {
 		pack();
 
 //		control action listeners
+		openFile.addActionListener(e -> chooseFile());
+		reportGenerate.addActionListener(e -> TestDB());
+
 		searchButton.addActionListener(e -> {
 			int connectionsIndex = (results.get(searchBox.getSelectedIndex()).index);
 			scrollBar.setValue(connectionsIndex * 31);
@@ -258,7 +265,6 @@ public class NetSecMonGUI extends JFrame {
 		int minMatchRatio = 0;
 		ArrayList<Result> results = new ArrayList<>();
 
-//		for (HttpsConnection connection : manager.connections) {
 		for (int index=0; index < manager.connections.size(); index++) {
 			HttpsConnection connection = manager.connections.get(index);
 			int Fuzzymatchvalue = FuzzySearch.ratio(input, connection.url.getHost());
@@ -347,6 +353,20 @@ public class NetSecMonGUI extends JFrame {
 		return targetUrlString;
 	}
 
+	private void TestDB() {
+		try {
+			Connection Conn = DriverManager.getConnection
+					("jdbc:mysql://127.0.0.1:3306/?user=root&password=Welcome2");
+			Statement s = Conn.createStatement();
+			s.executeUpdate("DROP DATABASE IF EXISTS TestDB");
+			int result = s.executeUpdate("CREATE DATABASE TestDB");
+			if (result != 0) {
+				System.out.println("\n SUCCESS in CREATING TESTDB");
+			} else System.out.println("\n FAILURE in CREATING TESTDB");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	private class Result implements Comparable<Result> {
 		private int matchRatio;
 		public String hostURL;

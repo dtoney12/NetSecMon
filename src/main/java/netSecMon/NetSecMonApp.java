@@ -1,16 +1,22 @@
 package netSecMon;
 
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@SpringBootApplication
 public class NetSecMonApp {
 	private final NetSecMonGUI gui;
 	private ConnectionsManager manager;
 	private final ExecutorService managerThread = Executors.newSingleThreadExecutor();
-	private NetSecMonApp() {
+	public NetSecMonApp() {
 		gui = new NetSecMonGUI();
 		gui.setAppInstance(this);
 		gui.setVisible(true);
@@ -30,7 +36,9 @@ public class NetSecMonApp {
 	}
 	public static void main(String[] args)
 	{
-		new NetSecMonApp();
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(NetSecMonApp.class);
+		builder.headless(false);
+		ConfigurableApplicationContext context = builder.run(args);
 		
 	}
 }
