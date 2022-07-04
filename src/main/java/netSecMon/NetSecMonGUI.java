@@ -330,9 +330,6 @@ public class NetSecMonGUI extends JFrame {
 			preparsedString = preparse(urlString);
 			url = new URL(preparsedString);
 			urls.add(url);
-//			System.out.println("\nURL ADDED: " + preparsedString + '\n');
-//			log.append("\nURL ADDED: " + preparsedString + '\n');
-
 		} catch (MalformedURLException e) {
 			System.out.println('\n' + "COULD NOT FORM URL: " + urlString + " || Preparsed output: " + preparsedString + "  -- -> java.net.MalformedURLException() ");
 		}
