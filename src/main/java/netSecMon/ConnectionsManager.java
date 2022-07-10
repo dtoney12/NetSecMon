@@ -9,6 +9,9 @@ The Thread_Manager class manages the thread pool and urls list for the NetSecMon
 package netSecMon;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import netSecMon.attempt.AttemptService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.net.UnknownHostException;
@@ -28,7 +31,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 
-
+@Service
 public class ConnectionsManager implements Runnable {
 	ScheduledThreadPoolExecutor pool;
 	ArrayList<URL> urls;
@@ -36,10 +39,12 @@ public class ConnectionsManager implements Runnable {
 	JTextArea log;
 	JPanel box;
 	private int pollingInterval;
-	
-	public ConnectionsManager() {
+	private final AttemptService dbService;
+	@Autowired
+	public ConnectionsManager(AttemptService attemptService) {
 		pool = new ScheduledThreadPoolExecutor(4);
 		pool.setRemoveOnCancelPolicy(true);
+		dbService = attemptService;
 	}
 	public void run() {
 		try {
@@ -50,6 +55,7 @@ public class ConnectionsManager implements Runnable {
 				HttpsConnection connection = new HttpsConnection(url);
 				connection.setLogField(log);
 				connection.setManager(this);
+				connection.setAttemptService(dbService);
 				connections.add(connection);
 				box.add(connection);
 				connection.resolveHostIP();

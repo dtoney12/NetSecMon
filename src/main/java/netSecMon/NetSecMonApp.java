@@ -1,6 +1,8 @@
 package netSecMon;
 
 
+import netSecMon.attempt.AttemptService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,13 +18,16 @@ public class NetSecMonApp {
 	private final NetSecMonGUI gui;
 	private ConnectionsManager manager;
 	private final ExecutorService managerThread = Executors.newSingleThreadExecutor();
-	public NetSecMonApp() {
-		gui = new NetSecMonGUI();
+	private final AttemptService dbService;
+	@Autowired
+	public NetSecMonApp(AttemptService attemptService) {
+		gui = new NetSecMonGUI(attemptService);
 		gui.setAppInstance(this);
 		gui.setVisible(true);
+		this.dbService = attemptService;
 	}
 	public void loadThreadManager() {
-		manager = new ConnectionsManager();
+		manager = new ConnectionsManager(dbService);
 		gui.setConnectionsManager(manager);
 		managerThread.submit(manager);
 	}

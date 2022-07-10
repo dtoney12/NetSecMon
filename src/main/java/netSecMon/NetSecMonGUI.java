@@ -9,6 +9,9 @@ The NetSecMonGUI class launches the GUI for the NetSecMon application
 package netSecMon;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import netSecMon.attempt.Attempt;
+import netSecMon.attempt.AttemptService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -22,10 +25,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
@@ -35,7 +41,7 @@ import javax.swing.text.JTextComponent;
 public class NetSecMonGUI extends JFrame {
 
 	final Integer[] pollIntervals = {5, 10, 30, 60, 120, 300, 1200, 3600, 10800, 86400};
-	final String[] displayOrderTypes = {"Most Recent", "Failed", "Pending", "Alphabetical", "IP Address"};
+	final String[] displayOrderTypes = {"Alphabetical", "IP Address"};
 	File file;
 	JTextField filePathTextField = new JTextField(20);
 	JTextArea log;
@@ -54,10 +60,12 @@ public class NetSecMonGUI extends JFrame {
 	ConnectionsManager manager;
 	NetSecMonApp app;
 	ArrayList<URL> urls = new ArrayList<>();
+	private final AttemptService dbService;
 
-
-	public NetSecMonGUI() {
+	@Autowired
+	public NetSecMonGUI(AttemptService attemptService) {
 		super("NetSecMon");
+		this.dbService = attemptService;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 
@@ -73,7 +81,7 @@ public class NetSecMonGUI extends JFrame {
 //		MainPanel{   |  JobsBoxPanel                           |      ControlPanel    |
 //		          \  |-----------------------------------------------------------------
 //		           \ |                                                                |
-//		            \|                             logPanel                           |
+//		            \|                             reportPanel                           |
 //		             |                                                                |
 //                   |                                                                |
 //		             |________________________________________________________________|
@@ -90,6 +98,7 @@ public class NetSecMonGUI extends JFrame {
 		programMenu.add(openFile);
 		programMenu.add(quitProgram);
 		JMenuItem reportGenerate = new JMenuItem("Generate Report");
+		reportGenerate.addActionListener(e -> generateReport());
 		reportMenu.add(reportGenerate);
 		helpMenu.add(new JMenuItem("About"));
 		menu.add(programMenu);
@@ -166,17 +175,17 @@ public class NetSecMonGUI extends JFrame {
 
 
 		// LogPanel
-		JPanel logPanel = new JPanel();
-		logPanel.setBorder(new TitledBorder("LOG"));
+		JPanel reportPanel = new JPanel();
+		reportPanel.setBorder(new TitledBorder("LOG"));
 		log = new JTextArea(20, 100);
 		JScrollPane logScrollPane = new JScrollPane(log);
-		logPanel.setLayout(new BorderLayout());
-		logPanel.add(logScrollPane, BorderLayout.CENTER);
+		reportPanel.setLayout(new BorderLayout());
+		reportPanel.add(logScrollPane, BorderLayout.CENTER);
 		DefaultCaret caret = (DefaultCaret) log.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
-		// mainPanel add centerPanel and logPanel
-		JSplitPane mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, logPanel);
+		// mainPanel add centerPanel and reportPanel
+		JSplitPane mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, centerPanel, reportPanel);
 		mainPanel.setOneTouchExpandable(true);
 		mainPanel.setDividerLocation(250);
 
@@ -188,7 +197,7 @@ public class NetSecMonGUI extends JFrame {
 
 //		control action listeners
 		openFile.addActionListener(e -> chooseFile());
-		reportGenerate.addActionListener(e -> TestDB());
+//		reportGenerate.addActionListener(e -> TestDB());
 
 		searchButton.addActionListener(e -> {
 			int connectionsIndex = (results.get(searchBox.getSelectedIndex()).index);
@@ -257,8 +266,39 @@ public class NetSecMonGUI extends JFrame {
 				manager.sortBy((String) displayOrderBox.getSelectedItem());
 			}
 		});
-		// listener to perform search
-//		searchButton.addActionListener(e -> search());
+	}
+
+	private void generateReport() {
+		JFrame reportFrame = new JFrame();
+		JPanel reportPanel = new JPanel();
+		reportPanel.setBorder(new TitledBorder("REPORT"));
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("    HOSTNAME        ");
+		model.addColumn("    FIRST CONNECT    ");
+		model.addColumn("    LAST CONNECT    ");
+		model.addColumn("      UP %          ");
+		JTable table = new JTable(model);
+		JScrollPane reportScrollPane = new JScrollPane(table);
+		reportPanel.setLayout(new BorderLayout());
+		reportPanel.add(reportScrollPane);
+		reportPanel.setMinimumSize(new Dimension(800,450));
+		reportFrame.add(reportPanel);
+		reportFrame.setVisible(true);
+		reportFrame.setMinimumSize(new Dimension(1000,500));
+		if (manager != null) {
+			for (HttpsConnection connection : manager.connections) {
+				String hostname = connection.url.getHost();
+				List<Attempt> urlAttempts = dbService.getAttemptsByHostname(hostname);
+				String firstAttemptTimestamp = urlAttempts.get(0).getTimestamp();
+				String lastAttemptTimestamp = urlAttempts.get(urlAttempts.size() - 1).getTimestamp();
+				Float numberOfSuccessfulConnections = 0.0f;
+				for (Attempt attempt : urlAttempts) {
+					if (attempt.getStatus() == Status.CONNECTED) numberOfSuccessfulConnections++;
+				}
+				Float upPercent = numberOfSuccessfulConnections / urlAttempts.size() * 100;
+				model.addRow(new Object[]{hostname, firstAttemptTimestamp, lastAttemptTimestamp, String.format("%.0f%%", upPercent)});
+			}
+		}
 	}
 
 	public ArrayList<Result> getMatchResults(String input) {
@@ -363,6 +403,9 @@ public class NetSecMonGUI extends JFrame {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	private void printReport() {
+
 	}
 	private class Result implements Comparable<Result> {
 		private int matchRatio;

@@ -5,16 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4becf11f-42ad-4191-b30d-3b94023993d0" name="Changes" comment="Converted project to a spring bean. Mysql table is now being created by Spring Boot.">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/cc8e64fd-1b1d-449f-8da5-36c3a1b74611.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/cc8e64fd-1b1d-449f-8da5-36c3a1b74611.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/AttemptService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/AttemptStartupScript.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/ConnectionsManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/HttpsConnection.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonApp.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/NetSecMonGUI.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/netSecMon/Status.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/ConnectionsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/ConnectionsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/HttpsConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/HttpsConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonApp.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/NetSecMonGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/ConnectionAttemptRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/AttemptRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/Attempt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/Attempt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/AttemptRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/netSecMon/attempt/AttemptRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/ConnectionsManager$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/ConnectionsManager$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/ConnectionsManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/ConnectionsManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/HttpsConnection$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/HttpsConnection$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/HttpsConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/HttpsConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI$Result.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI$Result.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/NetSecMonGUI.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/attempt/ConnectionAttemptRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/netSecMon/attempt/Attempt.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/netSecMon/attempt/Attempt.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +161,12 @@
       <workItem from="1656309620876" duration="1600000" />
       <workItem from="1656342583812" duration="2886000" />
       <workItem from="1656415079380" duration="727000" />
-      <workItem from="1656937055329" duration="395000" />
+      <workItem from="1656937055329" duration="7975000" />
+      <workItem from="1657204173219" duration="949000" />
+      <workItem from="1657205564976" duration="888000" />
+      <workItem from="1657208123344" duration="2000" />
+      <workItem from="1657208180321" duration="24263000" />
+      <workItem from="1657454839071" duration="60000" />
     </task>
     <task id="LOCAL-00001" summary="first commit?">
       <created>1654670021044</created>
@@ -233,7 +252,14 @@
       <option name="project" value="LOCAL" />
       <updated>1656262278467</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Converted project to a spring bean. Mysql table is now being created by Spring Boot.">
+      <created>1656937624774</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1656937624774</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

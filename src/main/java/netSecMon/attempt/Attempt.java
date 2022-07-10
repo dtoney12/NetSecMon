@@ -1,7 +1,8 @@
 package netSecMon.attempt;
 
+import netSecMon.Status;
+
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Table
 @Entity
@@ -12,16 +13,20 @@ public class Attempt {
     )
     private long id;
     private String url;
-    private LocalDate timestamp;
+    private String timestamp;
     private String status;
 
-    public Attempt(Long id, String url, LocalDate timestamp, String status) {
+    public Attempt(Long id, String url, String timestamp, Status status) {
         this.id = id;
         this.url = url;
         this.timestamp = timestamp;
-        this.status = status;
+        this.status = status.name();
     }
-
+    public Attempt(String url, String timestamp, Status status) {
+        this.url = url;
+        this.timestamp = timestamp;
+        this.status = status.name();
+    }
     public Attempt() {
 
     }
@@ -42,30 +47,27 @@ public class Attempt {
         this.url = url;
     }
 
-    public LocalDate getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public String getStatus() {
-        return status;
+    public Status getStatus() {
+        return Status.valueOf(status);
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(Status status) {
+        this.status = status.name();
     }
 
 
     @Override
     public String toString() {
-        return "Attempt{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", timestamp=" + timestamp +
-                ", status='" + status + '\'' +
-                '}';
+        return "\n" + url +
+                " | " + timestamp +
+                " | " + status;
     }
 }
