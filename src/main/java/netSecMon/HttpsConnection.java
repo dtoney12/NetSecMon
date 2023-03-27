@@ -276,7 +276,7 @@ public class HttpsConnection extends JPanel implements Runnable {
 				responseTextArea.append('\n' + "Response Code : " + con.getResponseCode());
 				responseTextArea.append('\n' + "Response Message:" + con.getResponseMessage());
 				responseTextArea.append('\n' + "Cipher Suite : " + con.getCipherSuite());
-				responseTextArea.append('\n' + "InstanceFollowRedirects:" + con.getInstanceFollowRedirects());
+				responseTextArea.append('\n' + "InstanceFollowRedirects:" 	+ con.getInstanceFollowRedirects());
 				responseTextArea.append('\n' + "Header : " + con.getHeaderField(1));
 				responseTextArea.append('\n' + "Using proxy:" + con.usingProxy());
 

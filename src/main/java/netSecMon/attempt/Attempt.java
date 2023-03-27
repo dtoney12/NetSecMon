@@ -3,7 +3,6 @@ package netSecMon.attempt;
 import netSecMon.Status;
 
 import javax.persistence.*;
-
 @Table
 @Entity
 public class Attempt {
